@@ -12,7 +12,7 @@ async function start() {
   // Currently all routes in index.ts seem to require user (getUserId calls c.get('user')).
   // app.use('/api/*', authMiddleware);
   
-  const port = 3001;
+  const port = Number(process.env.PORT) || 3001;
   serve({
     fetch: app.fetch,
     port,

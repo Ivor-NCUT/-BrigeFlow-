@@ -7,19 +7,30 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useContactStore } from '../store/contactStore';
-import { Search, Briefcase, Hash, UserPlus } from 'lucide-react';
+import { Search, Briefcase, Hash, UserPlus, FileText, Layout, GitFork, Clock, MessageSquare, PlusCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Page definitions
+const PAGES = [
+  { label: '人脉总览', keywords: ['人脉', '总览', 'dashboard', 'home'], path: '/', icon: Layout },
+  { label: '沟通记录', keywords: ['沟通', '记录', 'timeline', 'history'], path: '/timeline', icon: Clock },
+  { label: '关系图谱', keywords: ['关系', '图谱', 'network', 'graph'], path: '/network', icon: GitFork },
+  { label: '社交周报', keywords: ['周报', 'report', 'analysis'], path: '/report', icon: FileText },
+];
 
 export default function GlobalSearchModal() {
   const navigate = useNavigate();
   const { 
     contacts, 
+    relationships,
     searchModalOpen, 
     setSearchModalOpen, 
     setFilter,
     getAvatarColor,
     setQuickAddOpen,
-    setQuickAddInitialName
+    setQuickAddInitialName,
+    setShowAddRecordForm,
+    setAddRecordInitialSummary
   } = useContactStore();
   
   const [query, setQuery] = useState('');
@@ -46,25 +57,69 @@ export default function GlobalSearchModal() {
         setSearchModalOpen(false);
       }
       
-      // If no results and Enter is pressed, open quick add
-      if (e.key === 'Enter' && query.trim() !== '' && filteredContacts.length === 0) {
-        handleQuickAdd();
+      // Enter handling logic
+      if (e.key === 'Enter' && query.trim() !== '') {
+        // If no results, default to Quick Add Contact
+        if (hasNoResults) {
+          handleQuickAdd();
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [searchModalOpen, setSearchModalOpen, query]);
+  }, [searchModalOpen, setSearchModalOpen, query]); // Added hasNoResults to dependency in implementation
 
-  // Filter logic
-  const filteredContacts = query.trim() === '' ? [] : contacts.filter(c => {
-    const q = query.toLowerCase();
+  // --- Search Logic ---
+  const q = query.toLowerCase().trim();
+
+  // 1. Pages
+  const filteredPages = q === '' ? [] : PAGES.filter(p => 
+    p.label.toLowerCase().includes(q) || p.keywords.some(k => k.includes(q))
+  );
+
+  // 2. Contacts
+  const filteredContacts = q === '' ? [] : contacts.filter(c => {
     const matchName = c.name.toLowerCase().includes(q);
     const matchTag = c.tags.some(t => t.label.toLowerCase().includes(q));
     const matchCompany = (c.company || '').toLowerCase().includes(q);
     return matchName || matchTag || matchCompany;
   }).slice(0, 5);
 
-  const handleSelect = (contactName: string) => {
+  // 3. Records
+  const filteredRecords = q === '' ? [] : contacts.flatMap(c => 
+    c.communicationRecords
+      .filter(r => r.summary.toLowerCase().includes(q) || r.details?.toLowerCase().includes(q))
+      .map(r => ({ ...r, contact: c }))
+  ).slice(0, 3);
+
+  // 4. Relationships
+  const filteredRelationships = q === '' ? [] : relationships.map(r => {
+    const source = contacts.find(c => c.id === r.sourceContactId);
+    const target = contacts.find(c => c.id === r.targetContactId);
+    if (!source || !target) return null;
+    return { ...r, source, target };
+  }).filter(r => 
+    r && (
+      r.type.toLowerCase().includes(q) || 
+      r.source.name.toLowerCase().includes(q) || 
+      r.target.name.toLowerCase().includes(q)
+    )
+  ).slice(0, 3);
+
+  const hasNoResults = q !== '' && 
+    filteredPages.length === 0 && 
+    filteredContacts.length === 0 && 
+    filteredRecords.length === 0 && 
+    filteredRelationships.length === 0;
+
+  // --- Actions ---
+
+  const handlePageSelect = (path: string) => {
+    navigate(path);
+    setSearchModalOpen(false);
+  };
+
+  const handleContactSelect = (contactName: string) => {
     setFilter({ search: contactName });
     setSearchModalOpen(false);
     navigate('/');
@@ -74,6 +129,13 @@ export default function GlobalSearchModal() {
     setSearchModalOpen(false);
     setQuickAddInitialName(query);
     setQuickAddOpen(true);
+  };
+
+  const handleAddRecord = () => {
+    setSearchModalOpen(false);
+    setAddRecordInitialSummary(query);
+    setShowAddRecordForm(true);
+    navigate('/timeline');
   };
 
   if (!searchModalOpen) return null;
@@ -96,16 +158,16 @@ export default function GlobalSearchModal() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -20 }}
           transition={{ duration: 0.2 }}
-          className="w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden relative z-10 border border-gray-100"
+          className="w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden relative z-10 border border-gray-100 flex flex-col max-h-[80vh]"
         >
           {/* Search Input Header */}
-          <div className="flex items-center px-4 py-4 border-b border-gray-100">
+          <div className="flex items-center px-4 py-4 border-b border-gray-100 shrink-0">
             <Search className="w-5 h-5 text-gray-400 mr-3" />
             <input
               ref={inputRef}
               type="text"
               className="flex-1 text-lg outline-none placeholder:text-gray-400 text-gray-800"
-              placeholder="搜索姓名、标签或公司..."
+              placeholder="搜索人脉、记录、关系或跳转页面..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -118,51 +180,17 @@ export default function GlobalSearchModal() {
           </div>
 
           {/* Results */}
-          <div className="max-h-[60vh] overflow-y-auto">
-            {query.trim() === '' ? (
+          <div className="overflow-y-auto flex-1">
+            {q === '' ? (
               <div className="py-12 text-center text-gray-400">
-                <p className="text-sm">输入关键词搜索您的人脉网络</p>
+                <p className="text-sm">输入关键词全局搜索</p>
+                <div className="flex justify-center gap-4 mt-4 text-xs">
+                  <span className="bg-gray-50 px-2 py-1 rounded border border-gray-100">人脉</span>
+                  <span className="bg-gray-50 px-2 py-1 rounded border border-gray-100">沟通记录</span>
+                  <span className="bg-gray-50 px-2 py-1 rounded border border-gray-100">关系图谱</span>
+                </div>
               </div>
-            ) : filteredContacts.length > 0 ? (
-              <div className="py-2">
-                <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">联系人</div>
-                {filteredContacts.map(contact => (
-                  <button
-                    key={contact.id}
-                    onClick={() => handleSelect(contact.name)}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center group transition-colors"
-                  >
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium text-sm mr-4 shrink-0"
-                      style={{ backgroundColor: getAvatarColor(contact.name) }}
-                    >
-                      {contact.name.slice(0, 2)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center">
-                        <span className="font-medium text-gray-900 mr-2 truncate">{contact.name}</span>
-                        {contact.title && (
-                          <span className="text-xs text-gray-500 truncate border-l border-gray-300 pl-2">{contact.title}</span>
-                        )}
-                      </div>
-                      <div className="flex items-center mt-1 space-x-3 text-xs text-gray-500">
-                        {contact.company && (
-                          <div className="flex items-center truncate">
-                            <Briefcase className="w-3 h-3 mr-1" />
-                            {contact.company}
-                          </div>
-                        )}
-                        {contact.tags.length > 0 && (
-                          <div className="flex items-center truncate">
-                            <Hash className="w-3 h-3 mr-1" />
-                            {contact.tags[0].label}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            ) : (
+            ) : hasNoResults ? (
               <div className="py-2">
                  <button
                   onClick={handleQuickAdd}
@@ -183,17 +211,136 @@ export default function GlobalSearchModal() {
                     Enter
                   </div>
                 </button>
+                <button
+                  onClick={handleAddRecord}
+                  className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center group transition-colors border-l-4 border-transparent"
+                >
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-500 shadow-sm mr-4 shrink-0">
+                    <MessageSquare size={18} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center">
+                      <span className="font-medium text-gray-900 mr-2 truncate">添加沟通记录</span>
+                    </div>
+                    <div className="text-xs text-text-secondary mt-0.5">
+                      记录关于 <span className="font-semibold text-gray-700">"{query}"</span> 的事项
+                    </div>
+                  </div>
+                </button>
+              </div>
+            ) : (
+              <div className="py-2 pb-6">
+                {/* Pages */}
+                {filteredPages.length > 0 && (
+                  <div className="mb-2">
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider bg-gray-50/50">导航</div>
+                    {filteredPages.map(page => (
+                      <button
+                        key={page.path}
+                        onClick={() => handlePageSelect(page.path)}
+                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center group transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 mr-4 shrink-0">
+                          <page.icon size={16} />
+                        </div>
+                        <span className="font-medium text-gray-900">{page.label}</span>
+                        <span className="ml-auto text-xs text-gray-400">跳转</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Contacts */}
+                {filteredContacts.length > 0 && (
+                  <div className="mb-2">
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider bg-gray-50/50">人脉</div>
+                    {filteredContacts.map(contact => (
+                      <button
+                        key={contact.id}
+                        onClick={() => handleContactSelect(contact.name)}
+                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center group transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-medium text-xs mr-4 shrink-0"
+                          style={{ backgroundColor: getAvatarColor(contact.name) }}
+                        >
+                          {contact.name.slice(0, 2)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center">
+                            <span className="font-medium text-gray-900 mr-2 truncate">{contact.name}</span>
+                            {contact.title && <span className="text-xs text-gray-500 truncate border-l border-gray-300 pl-2">{contact.title}</span>}
+                          </div>
+                          {contact.company && <div className="text-xs text-gray-500 truncate mt-0.5">{contact.company}</div>}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Records */}
+                {filteredRecords.length > 0 && (
+                  <div className="mb-2">
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider bg-gray-50/50">沟通记录</div>
+                    {filteredRecords.map((record: any) => (
+                      <button
+                        key={record.id}
+                        onClick={() => {
+                          setSearchModalOpen(false);
+                          navigate('/timeline');
+                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center group transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 mr-4 shrink-0">
+                          <MessageSquare size={16} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-gray-900 truncate">{record.summary}</div>
+                          <div className="text-xs text-gray-500 truncate mt-0.5">
+                            与 <span className="font-medium text-gray-700">{record.contact.name}</span> · {record.date}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Relationships */}
+                {filteredRelationships.length > 0 && (
+                  <div className="mb-2">
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider bg-gray-50/50">关系</div>
+                    {filteredRelationships.map((rel: any) => (
+                      <button
+                        key={rel.id}
+                        onClick={() => {
+                          setSearchModalOpen(false);
+                          navigate('/network');
+                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center group transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600 mr-4 shrink-0">
+                          <GitFork size={16} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-gray-900 truncate">{rel.source.name} <span className="text-gray-400 mx-1">↔</span> {rel.target.name}</div>
+                          <div className="text-xs text-gray-500 truncate mt-0.5">
+                            {rel.type}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
           
           {/* Footer */}
-          <div className="bg-gray-50 px-4 py-2 text-xs text-gray-400 flex items-center justify-between border-t border-gray-100">
+          <div className="bg-gray-50 px-4 py-2 text-xs text-gray-400 flex items-center justify-between border-t border-gray-100 shrink-0">
             <div className="flex items-center space-x-4">
-              <span><kbd className="font-sans bg-white border border-gray-200 rounded px-1">↑</kbd> <kbd className="font-sans bg-white border border-gray-200 rounded px-1">↓</kbd> 切换选中</span>
-              <span><kbd className="font-sans bg-white border border-gray-200 rounded px-1">↵</kbd> 跳转</span>
+              <span><kbd className="font-sans bg-white border border-gray-200 rounded px-1">↑</kbd> <kbd className="font-sans bg-white border border-gray-200 rounded px-1">↓</kbd> 切换</span>
+              <span><kbd className="font-sans bg-white border border-gray-200 rounded px-1">↵</kbd> 确认</span>
             </div>
-            <span>BridgeFlow Search</span>
+            <span>BridgeFlow Command</span>
           </div>
         </motion.div>
       </div>

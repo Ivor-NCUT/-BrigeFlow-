@@ -31,6 +31,14 @@ export default function MainLayout() {
   const searchRef = useRef<HTMLInputElement>(null);
   const inactive = getInactiveContacts();
 
+  const [shortcutLabel, setShortcutLabel] = useState('⌘K');
+
+  useEffect(() => {
+    // Detect OS for shortcut label
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    setShortcutLabel(isMac ? '⌘K' : 'Ctrl+K');
+  }, []);
+
   useEffect(() => {
     fetchData();
     fetchUser();
@@ -112,7 +120,7 @@ export default function MainLayout() {
                 className="w-full h-10 pl-10 pr-16 rounded-lg border border-border bg-grey-50/80 text-sm placeholder:text-text-secondary focus:outline-none focus:border-primary/40 focus:bg-white focus:ring-2 focus:ring-primary/10 transition-all"
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
-                <span className="text-[10px] font-medium text-text-secondary bg-white border border-border rounded px-1.5 py-0.5">⌘K</span>
+                <span className="text-[10px] font-medium text-text-secondary bg-white border border-border rounded px-1.5 py-0.5">{shortcutLabel}</span>
               </div>
             </div>
           </div>

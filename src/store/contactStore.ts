@@ -22,6 +22,8 @@ interface ContactStore {
   activeView: 'cards' | 'table' | 'gallery';
   currentPage: string;
   searchModalOpen: boolean;
+  showAddRecordForm: boolean;
+  addRecordInitialSummary: string;
 
   setFilter: (filter: Partial<FilterState>) => void;
   setSelectedContact: (id: string | null) => void;
@@ -30,6 +32,8 @@ interface ContactStore {
   setSidebarCollapsed: (collapsed: boolean) => void;
   setQuickAddOpen: (open: boolean) => void;
   setSearchModalOpen: (open: boolean) => void;
+  setShowAddRecordForm: (show: boolean) => void;
+  setAddRecordInitialSummary: (summary: string) => void;
   setActiveView: (view: 'cards' | 'table' | 'gallery') => void;
   setCurrentPage: (page: string) => void;
   
@@ -63,6 +67,8 @@ export const useContactStore = create<ContactStore>((set, get) => ({
   sidebarCollapsed: false,
   quickAddOpen: false,
   searchModalOpen: false,
+  showAddRecordForm: false,
+  addRecordInitialSummary: '',
   activeView: 'table',
   currentPage: 'dashboard',
 
@@ -73,6 +79,8 @@ export const useContactStore = create<ContactStore>((set, get) => ({
   setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
   setQuickAddOpen: (open) => set({ quickAddOpen: open }),
   setSearchModalOpen: (open) => set({ searchModalOpen: open }),
+  setShowAddRecordForm: (show) => set({ showAddRecordForm: show }),
+  setAddRecordInitialSummary: (summary) => set({ addRecordInitialSummary: summary }),
   setActiveView: (view) => set({ activeView: view }),
   setCurrentPage: (page) => set({ currentPage: page }),
 

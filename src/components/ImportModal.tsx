@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, FileDown, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { useContactStore } from '../store/contactStore';
 import { supabase } from '../lib/supabase';
+import { API_BASE } from '../lib/api';
 
 interface ImportModalProps {
   isOpen: boolean;
@@ -22,8 +23,7 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDownloadTemplate = () => {
-    // Assuming the backend is running on localhost:3001
-    window.location.href = 'http://localhost:3001/api/contacts/template';
+    window.location.href = `${API_BASE}/api/contacts/template`;
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +41,7 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('http://localhost:3001/api/contacts/import', {
+      const response = await fetch(`${API_BASE}/api/contacts/import`, {
         method: 'POST',
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
         body: formData,

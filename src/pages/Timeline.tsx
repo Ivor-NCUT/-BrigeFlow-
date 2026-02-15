@@ -36,14 +36,21 @@ const typeColors: Record<string, string> = {
 };
 
 export default function Timeline() {
-  const { contacts, getAvatarColor, addCommunicationRecord, setQuickAddOpen, setQuickAddInitialName } = useContactStore();
-  const [showAddForm, setShowAddForm] = useState(false);
+  const { contacts, getAvatarColor, addCommunicationRecord, setQuickAddOpen, setQuickAddInitialName, showAddRecordForm, setShowAddRecordForm, addRecordInitialSummary, setAddRecordInitialSummary } = useContactStore();
   const [selectedContactIds, setSelectedContactIds] = useState<string[]>([]);
   const [comboboxInput, setComboboxInput] = useState('');
   const [isComboboxOpen, setIsComboboxOpen] = useState(false);
   const [newRecord, setNewRecord] = useState({ type: 'connection' as CommunicationRecord['type'], summary: '', details: '', followUpDate: '', followUpNote: '' });
   const [relationshipModalOpen, setRelationshipModalOpen] = useState(false);
   const [relationshipSourceId, setRelationshipSourceId] = useState<string | null>(null);
+
+  // Initialize summary from store
+  useEffect(() => {
+    if (addRecordInitialSummary) {
+      setNewRecord(prev => ({ ...prev, summary: addRecordInitialSummary }));
+      setAddRecordInitialSummary('');
+    }
+  }, [addRecordInitialSummary, setAddRecordInitialSummary]);
 
   // Collect all records sorted by date
   const allRecords = contacts.flatMap(c =>
@@ -73,7 +80,7 @@ export default function Timeline() {
       });
     });
 
-    setShowAddForm(false);
+    setShowAddRecordForm(false);
     setNewRecord({ type: 'connection', summary: '', details: '', followUpDate: '', followUpNote: '' });
     setSelectedContactIds([]);
     setComboboxInput('');
@@ -94,7 +101,7 @@ export default function Timeline() {
           <p className="text-sm text-gray-500 mt-1">记录每一次有价值的交流</p>
         </div>
         <button
-          onClick={() => setShowAddForm(!showAddForm)}
+          onClick={() => setShowAddRecordForm(!showAddRecordForm)}
           className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-hover transition-colors shadow-sm"
         >
           <Plus size={16} />
@@ -103,7 +110,7 @@ export default function Timeline() {
       </div>
 
       {/* Add form */}
-      {showAddForm && (
+      {showAddRecordForm && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -239,7 +246,7 @@ export default function Timeline() {
           </div>
           <div className="flex justify-end gap-3">
             <button
-              onClick={() => setShowAddForm(false)}
+              onClick={() => setShowAddRecordForm(false)}
               className="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
             >
               取消

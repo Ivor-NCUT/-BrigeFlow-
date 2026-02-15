@@ -9,6 +9,9 @@ import { cors } from "hono/cors";
 import * as tables from "./db/schema";
 import { db as postgresDb } from "./db/index";
 import { eq, inArray, and } from "drizzle-orm";
+import { serveStatic } from '@hono/node-server/serve-static';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 
 export async function createApp(authMiddleware?: any, dbOverride?: any): Promise<Hono> {
   const app = new Hono();
@@ -31,6 +34,29 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
     if (!user) throw new Error("User not authenticated");
     return user.id;
   };
+
+  // Serve Static Files (Frontend)
+  // Assuming frontend build is in ../dist relative to backend root, or ./dist relative to project root
+  // When running from project root: tsx backend/src/server.ts, cwd is project root.
+  // So ./dist is correct.
+  app.use('/*', serveStatic({
+    root: './dist',
+    rewriteRequestPath: (path) => path === '/' ? '/index.html' : path
+  }));
+
+  // Fallback for SPA routing (return index.html for non-API routes)
+  app.get('*', async (c) => {
+    // Skip /api routes
+    if (c.req.path.startsWith('/api')) {
+        return c.notFound();
+    }
+    try {
+        const indexHtml = await readFile(join(process.cwd(), 'dist', 'index.html'), 'utf-8');
+        return c.html(indexHtml);
+    } catch (e) {
+        return c.text('Frontend not found. Did you run `npm run build`?', 404);
+    }
+  });
 
   // GET /api/contacts
   app.get('/api/contacts', async (c) => {

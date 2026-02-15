@@ -1,6 +1,12 @@
 import { serve } from "@hono/node-server";
 import { createApp } from "./index";
 import { authMiddleware } from "./middleware/auth";
+import { config } from "dotenv";
+import { join } from "path";
+
+// Load environment variables from .env file
+// When running from root with `tsx backend/src/server.ts`, cwd is root.
+config({ path: join(process.cwd(), '.env') });
 
 async function start() {
   console.log("Starting backend server with Supabase...");

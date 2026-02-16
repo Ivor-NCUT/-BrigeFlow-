@@ -6,11 +6,13 @@
  */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, ExternalLink, MessageSquare, Calendar, ArrowRight, Pencil, Trash2, Link2, Upload } from 'lucide-react';
+import { ChevronDown, ChevronUp, ExternalLink, MessageSquare, Calendar, ArrowRight, Pencil, Trash2, Link2, Upload, Download, Loader2 } from 'lucide-react';
 import RelationshipModal from '../components/RelationshipModal';
 import ImportModal from '../components/ImportModal';
 import { useContactStore } from '../store/contactStore';
 import type { Contact } from '../types/contact';
+import { supabase } from '../lib/supabase';
+import { API_BASE } from '../lib/api';
 import bonjourIcon from '../assets/icons/bonjour-profile.svg';
 import magicHatIcon from '../assets/icons/magic-hat.svg';
 import celebrateIcon from '../assets/icons/celebrate.svg';
@@ -225,7 +227,35 @@ export default function Dashboard() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [relationshipModalOpen, setRelationshipModalOpen] = useState(false);
   const [importModalOpen, setImportModalOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [relationshipSourceId, setRelationshipSourceId] = useState<string | null>(null);
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const res = await fetch(`${API_BASE}/api/contacts/export`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      });
+
+      if (!res.ok) throw new Error('导出失败');
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `缘脉导出_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Export error:', err);
+      alert('导出失败，请稍后重试');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleEdit = (contact: Contact) => {
     setEditingContactId(contact.id);
@@ -278,6 +308,14 @@ export default function Dashboard() {
           >
             <Upload size={16} />
             批量导入
+          </button>
+          <button
+            onClick={handleExport}
+            disabled={isExporting}
+            className="glass-button flex items-center gap-1.5 text-text-secondary text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {isExporting ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+            批量导出
           </button>
           <div className="flex items-center gap-0.5 bg-fill-quaternary rounded-lg p-1">
             {(['table', 'cards'] as const).map(view => (

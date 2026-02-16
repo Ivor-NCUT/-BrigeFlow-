@@ -18,7 +18,8 @@ src/ - 前端核心代码 (4子目录: pages, components, store, lib)
   src/lib/ - 工具函数与 API 层
   src/types/ - TypeScript 类型定义
   src/assets/ - 静态资源 (icons)
-backend/ - 后端服务 (Hono, Drizzle, Local SQLite)
+backend/ - 后端服务 (Hono, Drizzle, Supabase Auth, xlsx)
+  backend/src/api/ - 业务接口 (import: CSV导入, template: 模板下载, export: Excel多Sheet导出)
 public/ - 静态资源
 </directory>
 

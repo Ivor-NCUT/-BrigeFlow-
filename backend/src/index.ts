@@ -267,6 +267,10 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
   const { downloadTemplateHandler } = await import('./api/template');
   app.get('/api/contacts/template', downloadTemplateHandler);
 
+  // GET /api/contacts/export
+  const { createExportHandler } = await import('./api/export');
+  app.get('/api/contacts/export', createExportHandler(db));
+
   // --- Shared Pages API ---
 
   // GET /api/shared-pages

@@ -11,12 +11,12 @@ import { useContactStore } from '../store/contactStore';
 import type { Tag, Contact } from '../types/contact';
 
 const TAG_COLORS: Record<string, string> = {
-  industry: '#1e40af',
-  skill: '#1d4ed8',
-  relationship: '#2563eb',
-  location: '#3b82f6',
-  custom: '#4f46e5',
-  role: '#8b5cf6',
+  industry: '#007AFF',
+  skill: '#5AC8FA',
+  relationship: '#34C759',
+  location: '#FF9500',
+  custom: '#AF52DE',
+  role: '#FF3B30',
 };
 
 interface QuickAddModalProps {}
@@ -30,18 +30,14 @@ export default function QuickAddModal({}: QuickAddModalProps) {
     tags: [] as Tag[],
   });
   const [tagInputs, setTagInputs] = useState({
-    industry: '',
-    skill: '',
-    role: '',
+    industry: '', skill: '', role: '',
   });
 
   useEffect(() => {
     if (contact) {
       setForm({
-        name: contact.name,
-        company: contact.company,
-        bonjourLink: contact.bonjourLink || '',
-        notes: contact.notes || '',
+        name: contact.name, company: contact.company,
+        bonjourLink: contact.bonjourLink || '', notes: contact.notes || '',
         tags: contact.tags,
       });
     } else {
@@ -58,10 +54,8 @@ export default function QuickAddModal({}: QuickAddModalProps) {
         const tag = allTags.find(t => t.category === 'role' && t.label === filter.role);
         if (tag) activeTags.push(tag);
       }
-
       setForm({
-        name: quickAddInitialName || '',
-        company: '', bonjourLink: '', notes: '',
+        name: quickAddInitialName || '', company: '', bonjourLink: '', notes: '',
         tags: activeTags,
       });
     }
@@ -75,19 +69,12 @@ export default function QuickAddModal({}: QuickAddModalProps) {
 
   const addTag = (label: string, category: 'industry' | 'skill' | 'role') => {
     const trimmed = label.trim();
-    if (!trimmed) return;
-    if (form.tags.some(t => t.label === trimmed && t.category === category)) return;
-    
-    // Check if tag exists in global tags with same category
+    if (!trimmed || form.tags.some(t => t.label === trimmed && t.category === category)) return;
     const existing = allTags.find(t => t.label === trimmed && t.category === category);
-    
     const newTag: Tag = existing || {
       id: `${category}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      label: trimmed,
-      category: category,
-      color: TAG_COLORS[category],
+      label: trimmed, category, color: TAG_COLORS[category],
     };
-    
     setForm(f => ({ ...f, tags: [...f.tags, newTag] }));
     setTagInputs(prev => ({ ...prev, [category]: '' }));
   };
@@ -97,192 +84,99 @@ export default function QuickAddModal({}: QuickAddModalProps) {
   };
 
   const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, category: 'industry' | 'skill' | 'role') => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addTag(tagInputs[category], category);
-    }
+    if (e.key === 'Enter') { e.preventDefault(); addTag(tagInputs[category], category); }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name) return;
-
     const contactData = {
-      name: form.name,
-      company: form.company,
-      bonjourLink: form.bonjourLink,
-      notes: form.notes,
-      tags: form.tags,
-      avatar: '',
+      name: form.name, company: form.company, bonjourLink: form.bonjourLink,
+      notes: form.notes, tags: form.tags, avatar: '',
       createdAt: new Date().toISOString().split('T')[0],
       lastContactedAt: new Date().toISOString().split('T')[0],
     };
-
-    if (contact) {
-      updateContact(contact.id, contactData);
-    } else {
-      addContact(contactData);
-    }
+    if (contact) updateContact(contact.id, contactData); else addContact(contactData);
     handleClose();
   };
 
+  /* ── Input field helper ── */
+  const inputCls = "w-full pl-9 pr-3 py-2 bg-grey-50 dark:bg-grey-800 border border-border dark:border-grey-700 rounded-lg text-sm text-text-primary dark:text-text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-text-tertiary";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]"
+        exit={{ opacity: 0, scale: 0.96 }}
+        className="bg-white dark:bg-grey-900 rounded-card shadow-card-hover w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] border border-border dark:border-grey-800"
       >
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-          <h2 className="text-lg font-bold text-gray-900">{contact ? '编辑联系人' : '快速添加联系人'}</h2>
-          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 transition-colors">
-            <X size={20} />
+        {/* Header */}
+        <div className="px-5 py-3.5 border-b border-border dark:border-grey-800 flex items-center justify-between bg-grey-50/50 dark:bg-grey-800/50">
+          <h2 className="text-base font-semibold text-text-primary dark:text-text-primary-dark">{contact ? '编辑联系人' : '快速添加联系人'}</h2>
+          <button onClick={handleClose} className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-fill-quaternary text-text-secondary transition-colors">
+            <X size={18} />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto">
-          <form id="quick-add-form" onSubmit={handleSubmit} className="space-y-5">
-            {/* Name */}
+        {/* Form */}
+        <div className="p-5 overflow-y-auto">
+          <form id="quick-add-form" onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">姓名</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">姓名</label>
               <div className="relative">
-                <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  type="text"
-                  required
-                  value={form.name}
-                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                  placeholder="输入姓名"
-                />
+                <UserPlus className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" size={15} />
+                <input type="text" required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className={inputCls} placeholder="输入姓名" />
               </div>
             </div>
 
-            {/* Company */}
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">公司/组织</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">公司/组织</label>
               <div className="relative">
-                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  type="text"
-                  value={form.company}
-                  onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
-                  className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                  placeholder="所属公司或组织"
-                />
+                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" size={15} />
+                <input type="text" value={form.company} onChange={e => setForm(f => ({ ...f, company: e.target.value }))} className={inputCls} placeholder="所属公司或组织" />
               </div>
             </div>
 
-            {/* Tags Section */}
-            <div className="space-y-4">
-              {/* Industry Tags */}
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">行业标签</label>
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-2 min-h-[42px] flex flex-wrap gap-2">
-                  {form.tags.filter(t => t.category === 'industry').map(tag => (
-                    <span
-                      key={tag.id}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-white"
-                      style={{ backgroundColor: tag.color }}
-                    >
-                      {tag.label}
-                      <button type="button" onClick={() => removeTag(tag.id)} className="hover:opacity-80">
-                        <X size={12} />
-                      </button>
-                    </span>
-                  ))}
-                  <input
-                    type="text"
-                    value={tagInputs.industry}
-                    onChange={e => setTagInputs(prev => ({ ...prev, industry: e.target.value }))}
-                    onKeyDown={e => handleTagKeyDown(e, 'industry')}
-                    className="bg-transparent text-sm min-w-[60px] flex-1 focus:outline-none"
-                    placeholder="输入行业..."
-                  />
+            {/* Tag sections */}
+            <div className="space-y-3">
+              {([['industry', '行业标签'], ['skill', '专业技能标签'], ['role', '岗位标签']] as const).map(([cat, label]) => (
+                <div key={cat}>
+                  <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">{label}</label>
+                  <div className="bg-grey-50 dark:bg-grey-800 border border-border dark:border-grey-700 rounded-lg p-2 min-h-[38px] flex flex-wrap gap-1.5">
+                    {form.tags.filter(t => t.category === cat).map(tag => (
+                      <span key={tag.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-pill text-xs font-medium text-white" style={{ backgroundColor: tag.color }}>
+                        {tag.label}
+                        <button type="button" onClick={() => removeTag(tag.id)} className="hover:opacity-80"><X size={11} /></button>
+                      </span>
+                    ))}
+                    <input
+                      type="text"
+                      value={tagInputs[cat]}
+                      onChange={e => setTagInputs(prev => ({ ...prev, [cat]: e.target.value }))}
+                      onKeyDown={e => handleTagKeyDown(e, cat)}
+                      className="bg-transparent text-sm min-w-[60px] flex-1 focus:outline-none text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary"
+                      placeholder={`输入${label.replace('标签', '')}...`}
+                    />
+                  </div>
                 </div>
-              </div>
+              ))}
+            </div>
 
-              {/* Skill Tags */}
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">专业技能标签</label>
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-2 min-h-[42px] flex flex-wrap gap-2">
-                  {form.tags.filter(t => t.category === 'skill').map(tag => (
-                    <span
-                      key={tag.id}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-white"
-                      style={{ backgroundColor: tag.color }}
-                    >
-                      {tag.label}
-                      <button type="button" onClick={() => removeTag(tag.id)} className="hover:opacity-80">
-                        <X size={12} />
-                      </button>
-                    </span>
-                  ))}
-                  <input
-                    type="text"
-                    value={tagInputs.skill}
-                    onChange={e => setTagInputs(prev => ({ ...prev, skill: e.target.value }))}
-                    onKeyDown={e => handleTagKeyDown(e, 'skill')}
-                    className="bg-transparent text-sm min-w-[60px] flex-1 focus:outline-none"
-                    placeholder="输入技能..."
-                  />
-                </div>
-              </div>
-
-              {/* Role Tags */}
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">岗位标签</label>
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-2 min-h-[42px] flex flex-wrap gap-2">
-                  {form.tags.filter(t => t.category === 'role').map(tag => (
-                    <span
-                      key={tag.id}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-white"
-                      style={{ backgroundColor: tag.color }}
-                    >
-                      {tag.label}
-                      <button type="button" onClick={() => removeTag(tag.id)} className="hover:opacity-80">
-                        <X size={12} />
-                      </button>
-                    </span>
-                  ))}
-                  <input
-                    type="text"
-                    value={tagInputs.role}
-                    onChange={e => setTagInputs(prev => ({ ...prev, role: e.target.value }))}
-                    onKeyDown={e => handleTagKeyDown(e, 'role')}
-                    className="bg-transparent text-sm min-w-[60px] flex-1 focus:outline-none"
-                    placeholder="输入岗位..."
-                  />
-                </div>
+            <div>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">Bonjour 名片链接</label>
+              <div className="relative">
+                <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" size={15} />
+                <input type="url" value={form.bonjourLink} onChange={e => setForm(f => ({ ...f, bonjourLink: e.target.value }))} className={inputCls} placeholder="输入网页链接或小程序链接..." />
               </div>
             </div>
 
-            {/* Bonjour Link */}
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Bonjour 名片链接/小程序链接</label>
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">备注</label>
               <div className="relative">
-                <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  type="url"
-                  value={form.bonjourLink}
-                  onChange={e => setForm(f => ({ ...f, bonjourLink: e.target.value }))}
-                  className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                  placeholder="输入网页链接或小程序链接..."
-                />
-              </div>
-            </div>
-
-            {/* Notes */}
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">备注</label>
-              <div className="relative">
-                <StickyNote className="absolute left-3 top-3 text-gray-400" size={16} />
-                <textarea
-                  value={form.notes}
-                  onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-                  rows={3}
-                  className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
+                <StickyNote className="absolute left-3 top-3 text-text-tertiary" size={15} />
+                <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} rows={3}
+                  className="w-full pl-9 pr-3 py-2 bg-grey-50 dark:bg-grey-800 border border-border dark:border-grey-700 rounded-lg text-sm text-text-primary dark:text-text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none placeholder:text-text-tertiary"
                   placeholder="关于这位联系人的其他信息..."
                 />
               </div>
@@ -290,18 +184,12 @@ export default function QuickAddModal({}: QuickAddModalProps) {
           </form>
         </div>
 
-        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex justify-end gap-3">
-          <button
-            onClick={handleClose}
-            className="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-200 transition-colors"
-          >
+        {/* Footer */}
+        <div className="px-5 py-3.5 border-t border-border dark:border-grey-800 bg-grey-50/50 dark:bg-grey-800/50 flex justify-end gap-2.5">
+          <button onClick={handleClose} className="px-4 py-1.5 rounded-lg text-sm font-medium text-text-secondary hover:bg-fill-quaternary transition-colors">
             取消
           </button>
-          <button
-            type="submit"
-            form="quick-add-form"
-            className="px-6 py-2 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-hover shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95"
-          >
+          <button type="submit" form="quick-add-form" className="px-5 py-1.5 rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary-hover transition-all active:scale-95">
             {contact ? '保存修改' : '确认添加'}
           </button>
         </div>

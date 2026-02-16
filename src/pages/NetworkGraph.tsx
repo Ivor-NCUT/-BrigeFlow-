@@ -224,7 +224,7 @@ export default function NetworkGraph() {
         ctx.beginPath();
         ctx.moveTo(s.x, s.y);
         ctx.lineTo(t.x, t.y);
-        ctx.strokeStyle = isHighlight ? '#4F46E5' : '#64748B';
+        ctx.strokeStyle = isHighlight ? '#007AFF' : '#64748B';
         ctx.lineWidth = isHighlight ? 4 : 2.5;
         ctx.stroke();
 
@@ -256,7 +256,7 @@ export default function NetworkGraph() {
           ctx.strokeStyle = '#E5E7EB';
           ctx.lineWidth = 1;
           ctx.stroke();
-          ctx.fillStyle = '#4F46E5';
+          ctx.fillStyle = '#007AFF';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText(text, mx, my);
@@ -271,14 +271,14 @@ export default function NetworkGraph() {
           ctx.beginPath();
           ctx.moveTo(src.x, src.y);
           ctx.lineTo(mp.x, mp.y);
-          ctx.strokeStyle = '#4F46E5';
+          ctx.strokeStyle = '#007AFF';
           ctx.lineWidth = 2;
           ctx.setLineDash([6, 4]);
           ctx.stroke();
           ctx.setLineDash([]);
           ctx.beginPath();
           ctx.arc(mp.x, mp.y, 4, 0, Math.PI * 2);
-          ctx.fillStyle = '#4F46E5';
+          ctx.fillStyle = '#007AFF';
           ctx.fill();
         }
       }
@@ -313,7 +313,7 @@ export default function NetworkGraph() {
           const by = n.y - n.radius * 0.6;
           ctx.beginPath();
           ctx.arc(bx, by, 8, 0, Math.PI * 2);
-          ctx.fillStyle = '#4F46E5';
+          ctx.fillStyle = '#007AFF';
           ctx.fill();
           ctx.font = 'bold 9px system-ui, sans-serif';
           ctx.fillStyle = '#fff';

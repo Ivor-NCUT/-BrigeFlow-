@@ -64,3 +64,11 @@ export interface ShareConfig {
   customDomain: string;
   selectedContacts: string[];
 }
+
+export interface SharedPage {
+  id: string;
+  slug: string;
+  title: string;
+  config: ShareConfig;
+  createdAt: string;
+}

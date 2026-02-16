@@ -1,0 +1,27 @@
+<svg width="58" height="58" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d_15202_8130)">
+<g clip-path="url(#clip0_15202_8130)">
+<path d="M-0.00128174 0H57.9987V58H-0.00128174V0Z" fill="#242938"/>
+<path d="M23.2967 46.4081C26.3368 46.4081 28.8067 43.811 28.8067 40.6079V34.808H23.2967C20.2566 34.808 17.7867 37.4051 17.7867 40.6079C17.7867 43.8106 20.2566 46.4081 23.2967 46.4081Z" fill="#0ACF83"/>
+<path d="M39.8262 29.005C39.8262 32.2081 37.3591 34.8053 34.3162 34.8053C31.2732 34.8053 28.8062 32.2081 28.8062 29.005C28.8062 25.8049 31.2732 23.2052 34.3162 23.2052C37.3591 23.2052 39.8262 25.8049 39.8262 29.005Z" fill="#1ABCFE"/>
+<path d="M17.7867 29.005C17.7867 25.8049 20.2566 23.2052 23.2967 23.2052H28.8067V34.8053H23.2967C20.2566 34.8053 17.7867 32.2081 17.7867 29.005Z" fill="#A259FF"/>
+<path d="M28.8065 11.6051H34.3165C37.3565 11.6051 39.8265 14.2049 39.8265 17.405C39.8265 20.6081 37.3594 23.2053 34.3165 23.2053H28.8065V11.6051Z" fill="#FF7262"/>
+<path d="M17.7867 17.405C17.7867 14.2049 20.2566 11.6052 23.2967 11.6052H28.8067V23.2053H23.2967C20.2566 23.2053 17.7867 20.6078 17.7867 17.405Z" fill="#F24E1E"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_15202_8130" x="0" y="0" width="66" height="66" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="4" dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_15202_8130"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_15202_8130" result="shape"/>
+</filter>
+<clipPath id="clip0_15202_8130">
+<path d="M0 16C0 7.16345 7.16344 0 16 0H42C50.8366 0 58 7.16344 58 16V42C58 50.8366 50.8366 58 42 58H16C7.16345 58 0 50.8366 0 42V16Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>

@@ -1,0 +1,346 @@
+* {
+  box-sizing: border-box;
+}
+
+.section {
+  width: 562px;
+  height: 944px;
+
+  .message {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+  }
+
+  .selectedFalse {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+    border-radius: 100px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    width: 54px;
+    height: 48px;
+  }
+
+  .selectedTrue {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+    border-radius: 100px;
+    background: var(--Fills-Quaternary, #78788014);
+    padding-top: 8px;
+    padding-bottom: 8px;
+    width: 54px;
+    height: 48px;
+
+    .text {
+      flex-shrink: 0;
+      line-height: 20px;
+      letter-spacing: 0;
+      color: var(--Colors-Blue, #007aff);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+
+  .component {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 16px;
+
+    .a {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      line-height: 14px;
+      letter-spacing: 0;
+      color: var(--Labels-Secondary, #8a8a8e);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 10px;
+    }
+  }
+
+  .letter {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: flex-start;
+    border: 1px dashed #9747ff;
+    padding: 19px;
+    width: 56px;
+    row-gap: 12px;
+
+    .a2 {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      line-height: 14px;
+      letter-spacing: 0;
+      color: var(--Labels-Secondary, #8a8a8e);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 10px;
+    }
+
+    .stateTouchDown {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      border-radius: 1000px;
+      background: var(--Colors-Blue, #007aff);
+
+      .a3 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+        line-height: 14px;
+        letter-spacing: 0;
+        color: var(--Grays-White, #ffffff);
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 10px;
+      }
+    }
+
+    .frame {
+      display: flex;
+      position: absolute;
+      top: 31px;
+      left: -40px;
+      flex-shrink: 0;
+      align-items: center;
+      border-radius: 6px;
+      box-shadow: 0px 6px 10px 4px #0000001a;
+      background: var(--Backgrounds-Grouped-Secondary, #ffffff);
+      width: 49px;
+      height: 49px;
+
+      .a4 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 49px;
+        height: 49px;
+        line-height: 32px;
+        letter-spacing: 0;
+        color: var(--Labels-Primary, #000000);
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .vector2 {
+        width: 7px;
+        height: 13px;
+      }
+    }
+  }
+
+  .prograss {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border: 1px dashed #9747ff;
+    padding: 19px;
+    width: 140px;
+    overflow: hidden;
+    row-gap: 10px;
+
+    .block2 {
+      flex-shrink: 0;
+      align-self: stretch;
+      border-radius: 8px;
+      background: var(--Fills-Tertiary, #7878801f);
+      width: 16px;
+      overflow: hidden;
+    }
+
+    .block {
+      flex-shrink: 0;
+      align-self: stretch;
+      border-radius: 8px;
+      background: var(--Colors-Blue, #007aff);
+      width: 24px;
+      overflow: hidden;
+    }
+
+    .stepStep1 {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      column-gap: 3px;
+    }
+
+    .stepStep2 {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      column-gap: 3px;
+    }
+  }
+
+  .bottomBarButton {
+    display: inline-flex;
+    align-items: flex-start;
+    column-gap: 10px;
+    border: 1px dashed #9747ff;
+    padding: 19px;
+    overflow: hidden;
+  }
+
+  .bottomBar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border: 1px dashed #9747ff;
+    padding: 19px;
+    width: 402px;
+    overflow: hidden;
+    row-gap: 10px;
+
+    .button {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      column-gap: 10px;
+      border-radius: 100px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      width: 44px;
+      height: 44px;
+    }
+
+    .bottomBarNew {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      justify-content: space-between;
+      height: 56px;
+
+      .container {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 40px;
+        box-shadow: inset -1px -1px 0px 0px #ffffff40,
+          inset 1px 1px 0px 0px #ffffff;
+        background: #ffffffcc;
+        padding: 4px;
+        overflow: hidden;
+        backdrop-filter: blur(30px);
+      }
+
+      .container2 {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 40px;
+        box-shadow: inset -1px -1px 0px 0px #ffffff40,
+          inset 1px 1px 0px 0px #ffffff;
+        background: #ffffffcc;
+        padding: 4px 12px;
+        height: 56px;
+        overflow: hidden;
+        backdrop-filter: blur(30px);
+      }
+    }
+
+    .bottomBarWithLabel {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      justify-content: space-between;
+      height: 68px;
+
+      .container3 {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 40px;
+        box-shadow: inset -1px -1px 0px 0px #ffffff40,
+          inset 1px 1px 0px 0px #ffffff;
+        background: #ffffffcc;
+        padding: 8px 16px;
+        overflow: hidden;
+        backdrop-filter: blur(30px);
+
+        .bottomBarButton2 {
+          display: flex;
+          flex-direction: column;
+          flex-shrink: 0;
+          align-items: center;
+          justify-content: center;
+          border-radius: 20px;
+          padding-top: 8px;
+          padding-bottom: 8px;
+          width: 46px;
+          row-gap: 2px;
+
+          .text2 {
+            flex-shrink: 0;
+            line-height: 14px;
+            letter-spacing: 0;
+            color: var(--Labels-Secondary, #8a8a8e);
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+            font-size: 10px;
+          }
+        }
+
+        .bottomBarButton3 {
+          display: flex;
+          flex-direction: column;
+          flex-shrink: 0;
+          align-items: center;
+          justify-content: center;
+          border-radius: 20px;
+          padding-top: 8px;
+          padding-bottom: 8px;
+          width: 46px;
+          row-gap: 2px;
+
+          .text3 {
+            flex-shrink: 0;
+            line-height: 14px;
+            letter-spacing: 0;
+            color: var(--Colors-Blue, #007aff);
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+            font-size: 10px;
+          }
+        }
+      }
+
+      .container4 {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 40px;
+        box-shadow: inset -1px -1px 0px 0px #ffffff40,
+          inset 1px 1px 0px 0px #ffffff;
+        background: #ffffffcc;
+        padding: 4px 16px;
+        height: 68px;
+        overflow: hidden;
+        backdrop-filter: blur(30px);
+      }
+    }
+  }
+}

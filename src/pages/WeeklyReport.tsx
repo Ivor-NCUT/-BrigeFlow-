@@ -42,7 +42,7 @@ export default function WeeklyReport() {
       {/* Summary cards */}
       <div className="grid grid-cols-4 gap-4 mb-8">
         {[
-          { label: '总人脉数', value: contacts.length, icon: Users, color: '#4F46E5', bg: '#EEF2FF' },
+          { label: '总人脉数', value: contacts.length, icon: Users, color: '#007AFF', bg: '#E5F1FF' },
           { label: '本周新增', value: stats.newContacts, icon: TrendingUp, color: '#059669', bg: '#ECFDF5' },
           { label: '本周沟通', value: stats.communications, icon: MessageSquare, color: '#D97706', bg: '#FFFBEB' },
           { label: '待跟进', value: stats.followUps, icon: ArrowRight, color: '#DC2626', bg: '#FEF2F2' },

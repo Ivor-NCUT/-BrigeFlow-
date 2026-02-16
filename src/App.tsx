@@ -9,6 +9,7 @@ import WeeklyReport from './pages/WeeklyReport';
 import SharePage from './pages/SharePage';
 import ProfilePage from './pages/ProfilePage';
 import LoginPage from './pages/LoginPage';
+import PublicSharePage from './pages/PublicSharePage';
 
 function RequireAuth({ children }: { children: JSX.Element }) {
   const [session, setSession] = useState<any>(null);
@@ -53,6 +54,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/s/:slug" element={<PublicSharePage />} />
         <Route path="/" element={
           <RequireAuth>
             <MainLayout />

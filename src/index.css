@@ -2,67 +2,103 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ================================================================
+ * 缘脉 BridgeFlow — Global Styles
+ * Design System: Bonjour iOS-inspired, adapted for desktop
+ * ================================================================ */
+
 :root {
-  --color-primary: #4F46E5;
-  --color-primary-light: #EEF2FF;
-  --color-primary-hover: #4338CA;
-  --color-bg: #FAFAFA;
+  --color-primary: #007AFF;
+  --color-primary-light: #E5F1FF;
+  --color-primary-hover: #005BB5;
+  --color-bg: #F2F2F7;
   --color-card: #FFFFFF;
-  --color-border: #D1D1D6;
-  --color-text: #1C1C1E;
-  --color-text-secondary: #8E8E93;
-  --color-accent-green: #26D5C0; /* Mint 500 */
-  --color-accent-amber: #D97706;
-  --color-accent-red: #DC2626;
-  --color-accent-purple: #7C3AED;
-  --color-accent-cyan: #10C5EA; /* Cyan 500 */
+  --color-border: #E5E5EA;
+  --color-text: #000000;
+  --color-text-secondary: #8A8A8E;
+  --color-accent-red: #FF3B30;
+  --color-accent-green: #34C759;
+  --color-accent-amber: #FF9500;
+  --color-accent-purple: #AF52DE;
+  --color-accent-cyan: #5AC8FA;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ── Base Reset ── */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', SimHei, Arial, Helvetica, sans-serif;
+    @apply bg-surface-bg dark:bg-surface-bg-dark text-text-primary dark:text-text-primary-dark transition-colors duration-300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
+/* ── Component Classes ── */
+@layer components {
+  /* Glass: lighter, more iOS-like */
+  .glass {
+    @apply bg-white/80 dark:bg-grey-900/80 backdrop-blur-glass border border-grey-100/60 dark:border-white/10 shadow-glass;
+  }
+
+  .glass-panel {
+    @apply glass rounded-card p-6;
+  }
+
+  .glass-card {
+    @apply bg-white dark:bg-grey-900 rounded-card border border-grey-100 dark:border-grey-800 shadow-card hover:shadow-card-hover transition-all duration-200;
+  }
+
+  .glass-button {
+    @apply bg-fill-quaternary rounded-lg px-4 py-2 hover:bg-fill-secondary active:scale-95 transition-all duration-200;
+  }
+
+  /* iOS-style pill tag */
+  .pill-tag {
+    @apply inline-flex items-center px-4 py-1 rounded-pill text-sm font-medium transition-all duration-200;
+  }
+
+  .pill-tag-selected {
+    @apply pill-tag bg-primary text-white;
+  }
+
+  .pill-tag-unselected {
+    @apply pill-tag bg-fill-quaternary text-primary hover:bg-fill-secondary;
+  }
 }
 
-body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Custom scrollbar */
+/* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+::-webkit-scrollbar-thumb { @apply bg-grey-200 dark:bg-grey-700 rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-grey-400 dark:bg-grey-600; }
 
-/* Network graph canvas */
-.network-canvas {
-  cursor: grab;
-}
-.network-canvas:active {
-  cursor: grabbing;
-}
+/* ── Network Graph ── */
+.network-canvas { cursor: grab; }
+.network-canvas:active { cursor: grabbing; }
 
-/* Animation keyframes */
+/* ── Animations ── */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 1; }
+  0%   { transform: scale(0.8); opacity: 1; }
   100% { transform: scale(1.4); opacity: 0; }
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.4s ease-out forwards;
+  animation: fadeInUp 0.35s ease-out forwards;
 }
 
 .stagger-1 { animation-delay: 0.05s; }

@@ -1,0 +1,449 @@
+* {
+  box-sizing: border-box;
+}
+
+.component {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  background: var(--Backgrounds-Secondary, #f2f2f7);
+  width: 402px;
+  height: 874px;
+  overflow: hidden;
+
+  .topBar {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: flex-start;
+    align-self: stretch;
+
+    .statusBar {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      justify-content: center;
+      column-gap: 154px;
+      padding: 21px 24px 19px;
+
+      .time2 {
+        display: flex;
+        flex-grow: 1;
+        align-items: center;
+        justify-content: center;
+        column-gap: 10px;
+        padding-top: 2px;
+        height: 22px;
+
+        .time {
+          flex-shrink: 0;
+          line-height: 22px;
+          letter-spacing: 0;
+          color: var(--Labels-Primary, #000000);
+          font-family: "SF Pro", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+          font-size: 17px;
+          font-weight: 600;
+        }
+      }
+
+      .levels {
+        display: flex;
+        flex-grow: 1;
+        align-items: center;
+        justify-content: center;
+        column-gap: 7px;
+        padding-top: 1px;
+        padding-right: 1px;
+        height: 22px;
+
+        .cellularConnection {
+          flex-shrink: 0;
+          width: 19px;
+          height: 12px;
+        }
+
+        .wifi {
+          flex-shrink: 0;
+          width: 17px;
+          height: 12px;
+        }
+
+        .frame {
+          flex-shrink: 0;
+          width: 27px;
+          height: 13px;
+        }
+      }
+    }
+
+    .title {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      padding: 0px 20px 1px;
+
+      .liChevronLeft {
+        flex-shrink: 0;
+        width: 22px;
+        height: 22px;
+        overflow: hidden;
+      }
+
+      .returnButton {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--Grays-Gray-5, #e5e5ea);
+        border-radius: 100px;
+        background: var(--Miscellaneous-Title-Button-BG, #ffffff80);
+        width: 32px;
+        height: 32px;
+      }
+
+      .returnButton2 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-left: 199px;
+        border: 1px solid var(--Grays-Gray-5, #e5e5ea);
+        border-radius: 100px;
+        background: var(--Miscellaneous-Title-Button-BG, #ffffff80);
+        width: 32px;
+        height: 32px;
+      }
+
+      .wechatsystemDefault3 {
+        margin-left: 12px;
+        border-radius: 100px;
+        width: 87px;
+        height: 32px;
+        backdrop-filter: blur(15px);
+      }
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: center;
+    align-self: stretch;
+    padding-top: 32px;
+    overflow: hidden;
+    row-gap: 40px;
+
+    .frame7088 {
+      display: inline-flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      margin-right: 100px;
+      margin-left: 100px;
+      row-gap: 8px;
+
+      .text {
+        flex-shrink: 0;
+        line-height: 40px;
+        letter-spacing: 0;
+        color: var(--Labels-Primary, #000000);
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 32px;
+        font-weight: 600;
+      }
+
+      .text2 {
+        flex-shrink: 0;
+        line-height: 24px;
+        letter-spacing: 0;
+        color: var(--Labels-Secondary, #8a8a8e);
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 16px;
+      }
+    }
+
+    .frame2 {
+      display: inline-flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      align-items: center;
+      align-self: stretch;
+      margin-right: 89px;
+      margin-left: 89px;
+      row-gap: 20px;
+
+      .qRCode {
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        align-self: stretch;
+        justify-content: center;
+        column-gap: 10px;
+        border-radius: 24px;
+        background: var(--Backgrounds-Grouped-Secondary, #ffffff);
+        padding: 12px;
+
+        .code {
+          flex-shrink: 0;
+          width: 200px;
+          height: 200px;
+        }
+      }
+
+      .text3 {
+        flex-shrink: 0;
+        line-height: 20px;
+        letter-spacing: 0;
+        color: var(--Labels-Secondary, #8a8a8e);
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+      }
+    }
+
+    .cards {
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      align-items: center;
+      width: 341px;
+
+      .autoWrapper {
+        position: relative;
+        flex-shrink: 0;
+        z-index: 3;
+        width: 343px;
+        height: 82px;
+
+        .card {
+          display: flex;
+          position: absolute;
+          top: 3px;
+          left: 1px;
+          align-items: center;
+          column-gap: 10px;
+          border-radius: 20px;
+          box-shadow: var(--Shadow-Level-4, 0px 6px 10px 4px #00000008);
+          background: var(--Backgrounds-Primary, #ffffff);
+          padding: 16px;
+          width: 341px;
+          height: 76px;
+          rotate: -1deg;
+
+          .image {
+            flex-shrink: 0;
+            align-self: stretch;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            rotate: -178deg;
+          }
+
+          .text4 {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            align-items: flex-start;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            row-gap: 4px;
+
+            .name {
+              flex-shrink: 0;
+              align-self: stretch;
+              line-height: 20px;
+              letter-spacing: 0;
+              color: var(--Labels-Primary, #000000);
+              font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+              font-size: 14px;
+              font-weight: 600;
+            }
+
+            .message {
+              flex-shrink: 0;
+              line-height: 16px;
+              letter-spacing: 0;
+              color: var(--Labels-Primary, #000000);
+              font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+              font-size: 12px;
+            }
+          }
+
+          .nOw {
+            flex-shrink: 0;
+            width: 31px;
+            height: 9px;
+          }
+        }
+      }
+
+      .autoWrapper2 {
+        position: relative;
+        flex-shrink: 0;
+        z-index: 2;
+        margin-top: -19px;
+        width: 328px;
+        height: 80px;
+
+        .card2 {
+          display: flex;
+          position: absolute;
+          top: 3px;
+          left: 1px;
+          align-items: center;
+          column-gap: 10px;
+          border-radius: 19px;
+          box-shadow: var(--Shadow-Level-4, 0px 6px 10px 4px #00000008);
+          background: var(--Backgrounds-Primary, #ffffff);
+          padding: 15px;
+          width: 326px;
+          height: 74px;
+          rotate: 1deg;
+
+          .avatar {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            border-radius: 27px;
+            padding: 4px 5px 4px 4px;
+            rotate: 178deg;
+            background-image: linear-gradient(0deg, #c6b9ee 0%, #e9e3fb 100%);
+
+            .image2 {
+              width: 34px;
+              height: 34px;
+              rotate: -178deg;
+            }
+          }
+
+          .text5 {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            align-items: flex-start;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            row-gap: 4px;
+
+            .name2 {
+              flex-shrink: 0;
+              align-self: stretch;
+              line-height: 19px;
+              letter-spacing: 0;
+              color: var(--Labels-Primary, #000000);
+              font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+              font-size: 13px;
+              font-weight: 600;
+            }
+
+            .message2 {
+              flex-shrink: 0;
+              line-height: 15px;
+              letter-spacing: 0;
+              color: var(--Labels-Primary, #000000);
+              font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+              font-size: 12px;
+            }
+          }
+
+          .nOw2 {
+            flex-shrink: 0;
+            width: 30px;
+            height: 8px;
+          }
+        }
+      }
+
+      .card3 {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        column-gap: 9px;
+        z-index: 1;
+        margin-top: -19px;
+        border-radius: 18px;
+        box-shadow: var(--Shadow-Level-4, 0px 6px 10px 4px #00000008);
+        background: var(--Backgrounds-Primary, #ffffff);
+        padding: 14px;
+        width: 306px;
+
+        .autoWrapper3 {
+          position: relative;
+          flex-shrink: 0;
+          width: 40px;
+          height: 40px;
+
+          .avatar2 {
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            border-radius: 900px;
+            width: 40px;
+            height: 40px;
+            rotate: -180deg;
+          }
+        }
+
+        .text6 {
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
+          align-items: flex-start;
+          padding-top: 2px;
+          padding-bottom: 2px;
+          row-gap: 4px;
+
+          .name3 {
+            flex-shrink: 0;
+            align-self: stretch;
+            line-height: 18px;
+            letter-spacing: 0;
+            color: var(--Labels-Primary, #000000);
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+          }
+
+          .message3 {
+            flex-shrink: 0;
+            line-height: 14px;
+            letter-spacing: 0;
+            color: var(--Labels-Primary, #000000);
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+            font-size: 11px;
+          }
+        }
+
+        .nOw3 {
+          flex-shrink: 0;
+          width: 28px;
+          height: 8px;
+        }
+      }
+    }
+  }
+
+  .homeIndicator2 {
+    display: flex;
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    flex-shrink: 0;
+    align-items: flex-start;
+    padding: 21px 134px 8px;
+    width: 402px;
+    height: 34px;
+
+    .homeIndicator {
+      border-radius: 100px;
+      background: var(--Gray-Gray14, #181818);
+      width: 134px;
+      height: 5px;
+    }
+  }
+}

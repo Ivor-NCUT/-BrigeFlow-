@@ -6,12 +6,13 @@
  */
 import { create } from 'zustand';
 import { client } from '../lib/client';
-import type { Contact, Tag, CommunicationRecord, FilterState, ShareConfig, Relationship } from '../types/contact';
+import type { Contact, Tag, CommunicationRecord, FilterState, ShareConfig, Relationship, SharedPage } from '../types/contact';
 
 interface ContactStore {
   contacts: Contact[];
   allTags: Tag[];
   relationships: Relationship[];
+  sharedPages: SharedPage[]; // Added
   filter: FilterState;
   shareConfig: ShareConfig;
   selectedContactId: string | null;
@@ -38,6 +39,10 @@ interface ContactStore {
   setCurrentPage: (page: string) => void;
   
   fetchData: () => Promise<void>;
+  fetchSharedPages: () => Promise<void>; // Added
+  createSharedPage: (page: Partial<SharedPage>) => Promise<void>; // Added
+  deleteSharedPage: (id: string) => Promise<void>; // Added
+
   addContact: (contact: any) => Promise<void>;
   updateContact: (id: string, updates: Partial<Contact>) => Promise<void>;
   deleteContacts: (ids: string[]) => Promise<void>;
@@ -59,6 +64,7 @@ export const useContactStore = create<ContactStore>((set, get) => ({
   contacts: [],
   allTags: [],
   relationships: [],
+  sharedPages: [],
   filter: { search: '', industry: '', skill: '', relationship: '', location: '', role: '' },
   shareConfig: { isPublic: false, showIndustry: true, showSkills: true, showNotes: false, showConnections: true, customDomain: 'my-network', selectedContacts: [] },
   selectedContactId: null,
@@ -83,6 +89,49 @@ export const useContactStore = create<ContactStore>((set, get) => ({
   setAddRecordInitialSummary: (summary) => set({ addRecordInitialSummary: summary }),
   setActiveView: (view) => set({ activeView: view }),
   setCurrentPage: (page) => set({ currentPage: page }),
+
+  fetchSharedPages: async () => {
+    try {
+      const res = await client.api.fetch('/api/shared-pages');
+      if (res.ok) {
+        const pages = await res.json();
+        const parsedPages = pages.map((p: any) => ({
+          ...p,
+          config: typeof p.config === 'string' ? JSON.parse(p.config) : p.config
+        }));
+        set({ sharedPages: parsedPages });
+      }
+    } catch (e) {
+      console.error("Failed to fetch shared pages", e);
+    }
+  },
+
+  createSharedPage: async (page) => {
+    try {
+      const res = await client.api.fetch('/api/shared-pages', {
+        method: 'POST',
+        body: JSON.stringify(page)
+      });
+      if (res.ok) {
+        await get().fetchSharedPages();
+      }
+    } catch (e) {
+      console.error("Failed to create shared page", e);
+    }
+  },
+
+  deleteSharedPage: async (id) => {
+    try {
+      const res = await client.api.fetch(`/api/shared-pages/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        await get().fetchSharedPages();
+      }
+    } catch (e) {
+      console.error("Failed to delete shared page", e);
+    }
+  },
 
   fetchData: async () => {
     try {
@@ -113,7 +162,7 @@ export const useContactStore = create<ContactStore>((set, get) => ({
 
           return {
             ...c,
-            communicationRecords: c.communicationRecords.map((r: any) => ({
+            communicationRecords: (c.communicationRecords || []).map((r: any) => ({
               ...r,
               followUp: r.followUpDate ? {
                 date: r.followUpDate,
@@ -279,7 +328,7 @@ export const useContactStore = create<ContactStore>((set, get) => ({
   },
 
   getAvatarColor: (name: string) => {
-    const avatarColors = ['#1e40af', '#1d4ed8', '#2563eb', '#3b82f6', '#4f46e5', '#0891B2', '#BE185D', '#65A30D'];
+    const avatarColors = ['#007AFF', '#5AC8FA', '#34C759', '#FF9500', '#AF52DE', '#FF3B30', '#00C7BE', '#005BB5'];
     let hash = 0;
     for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
     return avatarColors[Math.abs(hash) % avatarColors.length];

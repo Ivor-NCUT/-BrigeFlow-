@@ -1,0 +1,19 @@
+<svg width="637" height="232" viewBox="0 0 637 232" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_4303_3595" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="-50" y="-50" width="737" height="332">
+<rect width="737" height="332" transform="translate(-50 -50)" fill="white"/>
+<rect x="26" y="26" width="585" height="180" rx="34" fill="black"/>
+</mask>
+<g mask="url(#mask0_4303_3595)">
+<foreignObject x="-54" y="-49" width="745" height="340"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(40px);clip-path:url(#bgblur_0_4303_3595_clip_path);height:100%;width:100%"></div></foreignObject><g filter="url(#filter0_f_4303_3595)" data-figma-bg-blur-radius="80">
+<path d="M26 85.4C26 66.3582 26 56.8373 29.7058 49.5643C32.9655 43.1668 38.1668 37.9655 44.5643 34.7058C51.8373 31 61.3582 31 80.4 31H556.6C575.642 31 585.163 31 592.436 34.7058C598.833 37.9655 604.035 43.1668 607.294 49.5643C611 56.8373 611 66.3582 611 85.4V156.6C611 175.642 611 185.163 607.294 192.436C604.035 198.833 598.833 204.035 592.436 207.294C585.163 211 575.642 211 556.6 211H80.4C61.3582 211 51.8373 211 44.5643 207.294C38.1668 204.035 32.9655 198.833 29.7058 192.436C26 185.163 26 175.642 26 156.6V85.4Z" fill="black" fill-opacity="0.1" style="mix-blend-mode:hard-light"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_4303_3595" x="-54" y="-49" width="745" height="340" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="20" result="effect1_foregroundBlur_4303_3595"/>
+</filter>
+<clipPath id="bgblur_0_4303_3595_clip_path" transform="translate(54 49)"><path d="M26 85.4C26 66.3582 26 56.8373 29.7058 49.5643C32.9655 43.1668 38.1668 37.9655 44.5643 34.7058C51.8373 31 61.3582 31 80.4 31H556.6C575.642 31 585.163 31 592.436 34.7058C598.833 37.9655 604.035 43.1668 607.294 49.5643C611 56.8373 611 66.3582 611 85.4V156.6C611 175.642 611 185.163 607.294 192.436C604.035 198.833 598.833 204.035 592.436 207.294C585.163 211 575.642 211 556.6 211H80.4C61.3582 211 51.8373 211 44.5643 207.294C38.1668 204.035 32.9655 198.833 29.7058 192.436C26 185.163 26 175.642 26 156.6V85.4Z"/>
+</clipPath></defs>
+</svg>

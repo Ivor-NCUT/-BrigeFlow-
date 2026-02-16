@@ -25,7 +25,13 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
   }));
 
   if (authMiddleware) {
-    app.use('/api/*', authMiddleware);
+    app.use('/api/*', async (c, next) => {
+      // Exclude public routes
+      if (c.req.path.startsWith('/api/shared-pages/public/')) {
+        return next();
+      }
+      return authMiddleware(c, next);
+    });
   }
 
   // Helper to get user ID
@@ -260,6 +266,105 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
   // GET /api/contacts/template
   const { downloadTemplateHandler } = await import('./api/template');
   app.get('/api/contacts/template', downloadTemplateHandler);
+
+  // --- Shared Pages API ---
+
+  // GET /api/shared-pages
+  app.get('/api/shared-pages', async (c) => {
+    const userId = getUserId(c);
+    const pages = await db.select().from(tables.sharedPages).where(eq(tables.sharedPages.userId, userId));
+    return c.json(pages);
+  });
+
+  // POST /api/shared-pages
+  app.post('/api/shared-pages', async (c) => {
+    const userId = getUserId(c);
+    const body = await c.req.json();
+    
+    // Check if slug exists
+    const existing = await db.select().from(tables.sharedPages).where(eq(tables.sharedPages.slug, body.slug));
+    if (existing.length > 0) {
+      return c.json({ error: "Slug already exists" }, 409);
+    }
+
+    const [newPage] = await db.insert(tables.sharedPages).values({
+      ...body,
+      id: body.id || crypto.randomUUID(),
+      userId: userId,
+      config: JSON.stringify(body.config) // Ensure config is stored as string
+    }).returning();
+    
+    return c.json(newPage);
+  });
+
+  // GET /api/shared-pages/:slug (Public)
+  app.get('/api/shared-pages/public/:slug', async (c) => {
+    const slug = c.req.param('slug');
+    const pages = await db.select().from(tables.sharedPages).where(eq(tables.sharedPages.slug, slug));
+    
+    if (pages.length === 0) {
+      return c.json({ error: "Page not found" }, 404);
+    }
+    
+    // Parse config back to object
+    const page = pages[0];
+    let config: any = {};
+    try {
+        // @ts-ignore
+        config = typeof page.config === 'string' ? JSON.parse(page.config) : page.config;
+    } catch (e) {
+        console.error("Failed to parse config", e);
+    }
+    
+    const contactIds = config.selectedContacts || [];
+    
+    // Fetch contacts if any
+    let contactsList: any[] = [];
+    if (contactIds.length > 0) {
+        // Use inArray to fetch contacts
+        const contacts = await db.select().from(tables.contacts).where(inArray(tables.contacts.id, contactIds));
+        
+        // Fetch tags for these contacts
+        const allTags = await db.select().from(tables.tags).where(eq(tables.tags.userId, page.userId)); // Assuming tags are user-scoped
+        
+        // Join tags
+        contactsList = await Promise.all(contacts.map(async (contact) => {
+             const contactTagsList = await db
+                .select()
+                .from(tables.contactTags)
+                .where(eq(tables.contactTags.contactId, contact.id));
+                
+             const tagIds = contactTagsList.map(ct => ct.tagId);
+             const myTags = allTags.filter(t => tagIds.includes(t.id));
+             
+             // Filter sensitive fields for public view
+             const { sensitiveNotes, notes, ...publicContact } = contact;
+             
+             return {
+                 ...publicContact,
+                 notes: config.showNotes ? notes : undefined, // Respect showNotes setting
+                 tags: myTags,
+                 connections: [], // TODO: relationships if showConnections is true
+             };
+        }));
+    }
+
+    return c.json({ 
+        ...page, 
+        config,
+        contacts: contactsList 
+    });
+  });
+
+  // DELETE /api/shared-pages/:id
+  app.delete('/api/shared-pages/:id', async (c) => {
+    const userId = getUserId(c);
+    const id = c.req.param('id');
+    
+    await db.delete(tables.sharedPages).where(and(eq(tables.sharedPages.id, id), eq(tables.sharedPages.userId, userId)));
+    
+    return c.json({ success: true });
+  });
 
   return app;
 }

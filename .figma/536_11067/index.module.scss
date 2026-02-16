@@ -1,0 +1,115 @@
+* {
+  box-sizing: border-box;
+}
+
+.materialsDark {
+  display: flex;
+  align-items: flex-start;
+  width: 1080px;
+  height: 560px;
+  overflow: hidden;
+
+  .wallpaper {
+    display: flex;
+    flex-grow: 1;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-right: -432px;
+    padding: 50px 502px 482px 50px;
+    width: 1512px;
+    min-width: 1512px;
+    background-image: url(../image/mlnx26mv-jpilkbi.png);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    .ultraThick {
+      line-height: 16px;
+      letter-spacing: 0;
+      color: #7c7c7c;
+      font-family: "SF Pro", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .autoWrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+
+      .ultraThick2 {
+        margin-top: 24px;
+        border-radius: 5px;
+        background: var(--Materials-Ultrathick---Dark, #00000080);
+        width: 160px;
+        height: 410px;
+        backdrop-filter: blur(15px);
+      }
+    }
+
+    .autoWrapper2 {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+
+      .thick {
+        margin-top: 24px;
+        border-radius: 5px;
+        background: var(--Materials-Thick---Dark, #00000066);
+        width: 160px;
+        height: 410px;
+        backdrop-filter: blur(15px);
+      }
+    }
+
+    .autoWrapper3 {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+
+      .medium {
+        margin-top: 24px;
+        border-radius: 5px;
+        background: var(--Materials-Medium---Dark, #0000004a);
+        width: 160px;
+        height: 410px;
+        backdrop-filter: blur(15px);
+      }
+    }
+
+    .autoWrapper4 {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+
+      .thin {
+        margin-top: 24px;
+        border-radius: 5px;
+        background: var(--Materials-Thin---Dark, #00000033);
+        width: 160px;
+        height: 410px;
+        backdrop-filter: blur(15px);
+      }
+    }
+
+    .autoWrapper5 {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+
+      .ultraThin {
+        margin-top: 24px;
+        border-radius: 5px;
+        background: var(--Materials-Ultrathin---Dark, #0000001a);
+        width: 160px;
+        height: 410px;
+        backdrop-filter: blur(15px);
+      }
+    }
+  }
+}

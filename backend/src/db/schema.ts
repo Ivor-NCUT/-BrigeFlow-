@@ -72,3 +72,15 @@ export const connections = pgTable("connections", {
 }, (table) => ({
   sourceIdx: index("connections_source_idx").on(table.sourceContactId),
 }));
+
+export const sharedPages = pgTable("shared_pages", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  slug: text("slug").notNull().unique(),
+  title: text("title").notNull(),
+  config: text("config").notNull(), // JSON string: { contactIds: string[], showIndustry: boolean, etc. }
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdIdx: index("shared_pages_user_id_idx").on(table.userId),
+  slugIdx: index("shared_pages_slug_idx").on(table.slug),
+}));

@@ -1,0 +1,506 @@
+* {
+  box-sizing: border-box;
+}
+
+.dark {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #000000;
+  padding: 30px 10px;
+  width: 1000px;
+  height: 860px;
+  row-gap: 50px;
+
+  .smallUiDynamicOverLi {
+    flex-shrink: 0;
+    width: 270px;
+    letter-spacing: 0;
+    color: #ffffff;
+    font-family: "SF Pro", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .aColorsDark {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    flex-shrink: 0;
+    align-items: center;
+    width: 600px;
+    height: 860px;
+
+    .color {
+      flex-grow: 1;
+      align-self: stretch;
+      background: #808080;
+    }
+
+    .color2 {
+      flex-grow: 1;
+      align-self: stretch;
+      background: #333333;
+    }
+
+    .color3 {
+      flex-grow: 1;
+      align-self: stretch;
+      background: #000000;
+    }
+
+    .color4 {
+      flex-grow: 1;
+      align-self: stretch;
+      background: #0b2489;
+    }
+
+    .color5 {
+      flex-grow: 1;
+      align-self: stretch;
+      background: #0964b4;
+    }
+
+    .color6 {
+      flex-grow: 1;
+      align-self: stretch;
+      background: #2ca462;
+    }
+  }
+
+  .frame2 {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    align-self: stretch;
+    column-gap: 25px;
+    z-index: 1;
+
+    .frame {
+      display: inline-flex;
+      position: relative;
+      flex-shrink: 0;
+      align-items: center;
+      column-gap: 20px;
+      padding-right: 30px;
+      padding-left: 30px;
+
+      .glassEffect {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        border-radius: 296px;
+        background: #00000033;
+        width: 80px;
+        height: 48px;
+      }
+
+      .fill {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        opacity: 0.67;
+        border-radius: 1000px;
+        box-shadow: 0px 4px 30px 0px #0000000d;
+        background-color: #cccccc80;
+        width: 80px;
+        height: 48px;
+        background-image: linear-gradient(#ffffff0f, #ffffff0f),
+          linear-gradient(#00000099, #00000099);
+      }
+
+      .bGSmallUi {
+        position: relative;
+        flex-shrink: 0;
+        width: 80px;
+        height: 48px;
+      }
+
+      .blur {
+        position: absolute;
+        top: -26px;
+        right: 504px;
+        bottom: -26px;
+        left: 4px;
+        flex-shrink: 0;
+        width: 132px;
+        height: 100px;
+      }
+
+      .bGSmallUi2 {
+        position: relative;
+        flex-shrink: 0;
+        z-index: 1;
+        width: 80px;
+        height: 48px;
+      }
+
+      .blur2 {
+        position: absolute;
+        top: -26px;
+        right: 404px;
+        bottom: -26px;
+        left: 104px;
+        flex-shrink: 0;
+        z-index: 2;
+        width: 132px;
+        height: 100px;
+      }
+
+      .bGSmallUi3 {
+        position: relative;
+        flex-shrink: 0;
+        z-index: 3;
+        width: 80px;
+        height: 48px;
+      }
+
+      .blur3 {
+        position: absolute;
+        top: -26px;
+        right: 304px;
+        bottom: -26px;
+        left: 204px;
+        flex-shrink: 0;
+        z-index: 4;
+        width: 132px;
+        height: 100px;
+      }
+
+      .bGSmallUi4 {
+        position: relative;
+        flex-shrink: 0;
+        z-index: 5;
+        width: 80px;
+        height: 48px;
+      }
+
+      .blur4 {
+        position: absolute;
+        top: -26px;
+        right: 204px;
+        bottom: -26px;
+        left: 304px;
+        flex-shrink: 0;
+        z-index: 6;
+        width: 132px;
+        height: 100px;
+      }
+
+      .bGSmallUi5 {
+        position: relative;
+        flex-shrink: 0;
+        z-index: 7;
+        width: 80px;
+        height: 48px;
+      }
+
+      .blur5 {
+        position: absolute;
+        top: -26px;
+        right: 104px;
+        bottom: -26px;
+        left: 404px;
+        flex-shrink: 0;
+        z-index: 8;
+        width: 132px;
+        height: 100px;
+      }
+
+      .bGSmallUi6 {
+        position: relative;
+        flex-shrink: 0;
+        z-index: 9;
+        width: 80px;
+        height: 48px;
+      }
+
+      .blur6 {
+        position: absolute;
+        top: -26px;
+        right: 4px;
+        bottom: -26px;
+        left: 504px;
+        flex-shrink: 0;
+        z-index: 10;
+        width: 132px;
+        height: 100px;
+      }
+    }
+  }
+
+  .frame4 {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    align-self: stretch;
+    column-gap: 25px;
+    z-index: 2;
+
+    .frame3 {
+      display: flex;
+      position: relative;
+      flex-shrink: 0;
+      align-items: flex-start;
+      column-gap: 20px;
+      padding-right: 30px;
+      padding-left: 30px;
+      width: 645px;
+
+      .glassEffect2 {
+        border-radius: 296px;
+        background: #00000033;
+        width: 80px;
+        height: 48px;
+      }
+
+      .tint {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        border-radius: 1000px;
+        box-shadow: 0px 4px 30px 0px #0000000d;
+        background: #0091ff;
+      }
+
+      .blur7 {
+        position: absolute;
+        top: -26px;
+        right: 509px;
+        bottom: -26px;
+        left: 4px;
+        flex-shrink: 0;
+        width: 132px;
+        height: 100px;
+      }
+
+      .tint2 {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        z-index: 1;
+        border-radius: 1000px;
+        box-shadow: 0px 4px 30px 0px #0000000d;
+        background: #0091ff;
+      }
+
+      .blur8 {
+        position: absolute;
+        top: -26px;
+        right: 409px;
+        bottom: -26px;
+        left: 104px;
+        flex-shrink: 0;
+        z-index: 2;
+        width: 132px;
+        height: 100px;
+      }
+
+      .tint3 {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        z-index: 3;
+        border-radius: 1000px;
+        box-shadow: 0px 4px 30px 0px #0000000d;
+        background: #0091ff;
+      }
+
+      .blur9 {
+        position: absolute;
+        top: -26px;
+        right: 309px;
+        bottom: -26px;
+        left: 204px;
+        flex-shrink: 0;
+        z-index: 4;
+        width: 132px;
+        height: 100px;
+      }
+
+      .tint4 {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        z-index: 5;
+        border-radius: 1000px;
+        box-shadow: 0px 4px 30px 0px #0000000d;
+        background: #0091ff;
+      }
+
+      .blur10 {
+        position: absolute;
+        top: -26px;
+        right: 209px;
+        bottom: -26px;
+        left: 304px;
+        flex-shrink: 0;
+        z-index: 6;
+        width: 132px;
+        height: 100px;
+      }
+
+      .tint5 {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        z-index: 7;
+        border-radius: 1000px;
+        box-shadow: 0px 4px 30px 0px #0000000d;
+        background: #0091ff;
+      }
+
+      .blur11 {
+        position: absolute;
+        top: -26px;
+        right: 109px;
+        bottom: -26px;
+        left: 404px;
+        flex-shrink: 0;
+        z-index: 8;
+        width: 132px;
+        height: 100px;
+      }
+
+      .tint6 {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        z-index: 9;
+        border-radius: 1000px;
+        box-shadow: 0px 4px 30px 0px #0000000d;
+        background: #0091ff;
+      }
+
+      .blur12 {
+        position: absolute;
+        top: -26px;
+        right: 9px;
+        bottom: -26px;
+        left: 504px;
+        flex-shrink: 0;
+        z-index: 10;
+        width: 132px;
+        height: 100px;
+      }
+    }
+  }
+
+  .frame6 {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    align-self: stretch;
+    column-gap: 25px;
+    z-index: 3;
+
+    .frame5 {
+      display: flex;
+      position: relative;
+      flex-direction: column;
+      flex-shrink: 0;
+      align-items: flex-start;
+      padding-right: 30px;
+      padding-left: 30px;
+      row-gap: 10px;
+
+      .glassEffect3 {
+        flex-shrink: 0;
+        border-radius: 34px;
+        background: #00000033;
+        width: 585px;
+        height: 180px;
+      }
+
+      .blur13 {
+        display: flex;
+        position: absolute;
+        top: -26px;
+        right: 4px;
+        bottom: -26px;
+        left: 4px;
+        flex-shrink: 0;
+        align-items: center;
+        padding: 26px;
+        width: 637px;
+        height: 232px;
+        background-image: url(../image/mlnx0gf9-t21x629.svg);
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+
+        .fill2 {
+          opacity: 0.67;
+          border-radius: 34px;
+          background-color: #cccccc;
+          width: 585px;
+          height: 180px;
+          background-image: linear-gradient(#ffffff08, #ffffff08),
+            linear-gradient(#000000ab, #000000ab);
+        }
+      }
+    }
+  }
+
+  .frame8 {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    align-self: stretch;
+    column-gap: 25px;
+    z-index: 4;
+
+    .frame7 {
+      display: flex;
+      position: relative;
+      flex-direction: column;
+      flex-shrink: 0;
+      align-items: flex-start;
+      padding-right: 30px;
+      padding-left: 30px;
+      row-gap: 10px;
+
+      .glassEffect4 {
+        flex-shrink: 0;
+        border-radius: 34px;
+        background: #00000033;
+        width: 585px;
+        height: 300px;
+      }
+
+      .blur14 {
+        display: flex;
+        position: absolute;
+        top: -26px;
+        right: 4px;
+        bottom: -26px;
+        left: 4px;
+        flex-shrink: 0;
+        align-items: center;
+        padding: 26px;
+        width: 637px;
+        height: 352px;
+        background-image: url(../image/mlnx0gf9-qrqnc2n.svg);
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+
+        .fill3 {
+          opacity: 0.67;
+          border-radius: 34px;
+          background-color: #cccccc;
+          width: 585px;
+          height: 300px;
+          background-image: linear-gradient(#ffffff08, #ffffff08),
+            linear-gradient(#000000d9, #000000d9);
+        }
+      }
+    }
+  }
+}

@@ -14,7 +14,7 @@
     "@edgespark/client": "^1.0.3",
     "@headlessui/react": "^1.7.18",
     "@hono/node-server": "^1.19.9",
-    "@supabase/supabase-js": "^2.95.3",
+    "@insforge/sdk": "^1.1.5",
     "better-sqlite3": "^12.6.2",
     "cannon-es": "^0.20.0",
     "clsx": "^2.1.0",

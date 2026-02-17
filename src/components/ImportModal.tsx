@@ -8,7 +8,7 @@ import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, FileDown, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { useContactStore } from '../store/contactStore';
-import { supabase } from '../lib/supabase';
+import { insforge } from '../lib/insforge';
 import { API_BASE } from '../lib/api';
 
 interface ImportModalProps {
@@ -24,8 +24,8 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
 
   const handleDownloadTemplate = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
+      const { data: { session } } = await insforge.auth.getCurrentSession();
+      const token = session?.accessToken;
 
       const res = await fetch(`${API_BASE}/api/contacts/template`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
@@ -55,8 +55,8 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
     setResult(null);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
+      const { data: { session } } = await insforge.auth.getCurrentSession();
+      const token = session?.accessToken;
       
       const formData = new FormData();
       formData.append('file', file);

@@ -9,22 +9,22 @@ import { join } from "path";
 config({ path: join(process.cwd(), '.env') });
 
 async function start() {
-  console.log("Starting backend server with Supabase...");
-  
-  const app = await createApp(authMiddleware);
-  
-  // Apply Auth Middleware to all /api routes
-  // Note: If there are public routes, exclude them.
-  // Currently all routes in index.ts seem to require user (getUserId calls c.get('user')).
-  // app.use('/api/*', authMiddleware);
-  
-  const port = Number(process.env.PORT) || 3001;
-  serve({
-    fetch: app.fetch,
-    port,
-  }, (info) => {
-    console.log(`Backend running at http://localhost:${info.port}`);
-  });
+  console.log("Starting backend server...");
+
+  try {
+    const app = await createApp(authMiddleware);
+
+    const port = Number(process.env.PORT) || 3001;
+    serve({
+      fetch: app.fetch,
+      port,
+    }, (info) => {
+      console.log(`Backend running at http://localhost:${info.port}`);
+    });
+  } catch (e) {
+    console.error('[FATAL] Server failed to start:', e);
+    process.exit(1);
+  }
 }
 
 start();

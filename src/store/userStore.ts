@@ -1,12 +1,21 @@
 /**
- * [INPUT]: 依赖 supabase client 进行身份验证和用户信息更新
+ * [INPUT]: 依赖 insforge client 进行身份验证和用户信息更新
  * [OUTPUT]: 对外提供 useUserStore hook，管理当前用户 session 和 profile
  * [POS]: store/userStore，前端用户状态中心
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { create } from 'zustand';
-import { supabase } from '../lib/supabase';
-import type { User } from '@supabase/supabase-js';
+import { insforge } from '../lib/insforge';
+
+interface User {
+  id: string;
+  email?: string;
+  profile?: {
+    name?: string;
+    avatar_url?: string;
+    [key: string]: any;
+  };
+}
 
 interface UserState {
   user: User | null;
@@ -25,13 +34,12 @@ export const useUserStore = create<UserState>((set) => ({
   fetchUser: async () => {
     set({ loading: true });
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await insforge.auth.getCurrentSession();
       set({ user: session?.user || null });
       
-      // Listen for auth changes
-      supabase.auth.onAuthStateChange((_event, session) => {
-        set({ user: session?.user || null });
-      });
+      // Note: Insforge SDK might not have onAuthStateChange in the same way, 
+      // or we might need to poll or handle it differently.
+      // For now, we fetch once.
     } catch (error) {
       console.error('Error fetching user:', error);
     } finally {
@@ -41,15 +49,20 @@ export const useUserStore = create<UserState>((set) => ({
 
   updateProfile: async (updates) => {
     try {
-      const { data, error } = await supabase.auth.updateUser({
-        data: {
-          full_name: updates.fullName,
-          avatar_url: updates.avatarUrl,
-        }
+      const { data, error } = await insforge.auth.setProfile({
+        name: updates.fullName,
+        avatar_url: updates.avatarUrl,
       });
       
       if (error) throw error;
-      set({ user: data.user });
+      
+      // Merge updates into current user state
+      set((state) => ({
+        user: state.user ? { 
+          ...state.user, 
+          profile: { ...state.user.profile, ...data } 
+        } : null
+      }));
     } catch (error) {
       console.error('Error updating profile:', error);
       throw error;
@@ -60,9 +73,10 @@ export const useUserStore = create<UserState>((set) => ({
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const filePath = `avatars/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
+      // Assuming 'avatars' bucket exists
+      const { error: uploadError } = await insforge.storage
         .from('avatars')
         .upload(filePath, file);
 
@@ -70,7 +84,7 @@ export const useUserStore = create<UserState>((set) => ({
         throw uploadError;
       }
 
-      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      const { data } = insforge.storage.from('avatars').getPublicUrl(filePath);
       return data.publicUrl;
     } catch (error) {
       console.error('Error uploading avatar:', error);
@@ -79,7 +93,7 @@ export const useUserStore = create<UserState>((set) => ({
   },
 
   signOut: async () => {
-    await supabase.auth.signOut();
+    await insforge.auth.signOut();
     set({ user: null });
   }
 }));

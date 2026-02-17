@@ -1,17 +1,20 @@
 import { createMiddleware } from "hono/factory";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@insforge/sdk";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY; // or SERVICE_ROLE_KEY if needed, but for getUser(token), anon is fine usually if RLS is set, but actually getUser checks the token validity.
+const projectUrl = process.env.VITE_INSFORGE_PROJECT_URL || process.env.INSFORGE_PROJECT_URL;
+const anonKey = process.env.VITE_INSFORGE_ANON_KEY || process.env.INSFORGE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error("SUPABASE_URL and SUPABASE_ANON_KEY must be defined");
+if (!projectUrl || !anonKey) {
+  throw new Error("INSFORGE_PROJECT_URL and INSFORGE_ANON_KEY must be defined");
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const insforge = createClient({
+  baseUrl: projectUrl,
+  anonKey: anonKey
+});
 
 export const authMiddleware = createMiddleware(async (c, next) => {
   const authHeader = c.req.header("Authorization");
@@ -22,7 +25,21 @@ export const authMiddleware = createMiddleware(async (c, next) => {
 
   const token = authHeader.replace("Bearer ", "");
   
-  const { data: { user }, error } = await supabase.auth.getUser(token);
+  // Use getUser() to verify the token. 
+  // We need to pass the token to the client.
+  // Note: Insforge SDK's createClient doesn't accept a token per request in a stateless way easily
+  // without creating a new client or using global headers.
+  // A common pattern is to create a new client for the request.
+  
+  const client = createClient({
+    baseUrl: projectUrl,
+    anonKey: anonKey,
+    headers: {
+        Authorization: `Bearer ${token}`
+    }
+  });
+
+  const { data: { user }, error } = await client.auth.getUser();
 
   if (error || !user) {
     return c.json({ error: "Invalid token" }, 401);

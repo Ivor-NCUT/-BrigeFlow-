@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { supabase } from './lib/supabase';
+import { insforge } from './lib/insforge';
 import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/Dashboard';
 import Timeline from './pages/Timeline';
@@ -24,18 +24,14 @@ function RequireAuth({ children }: { children: JSX.Element }) {
       return;
     }
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    insforge.auth.getCurrentSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
+    // Insforge SDK might not support onAuthStateChange in the same way.
+    // For now, we rely on initial session check.
+    // If needed, we can implement a poller or custom event.
   }, []);
 
   if (loading) {

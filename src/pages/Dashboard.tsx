@@ -11,7 +11,7 @@ import RelationshipModal from '../components/RelationshipModal';
 import ImportModal from '../components/ImportModal';
 import { useContactStore } from '../store/contactStore';
 import type { Contact } from '../types/contact';
-import { supabase } from '../lib/supabase';
+import { insforge } from '../lib/insforge';
 import { API_BASE } from '../lib/api';
 import bonjourIcon from '../assets/icons/bonjour-profile.svg';
 import magicHatIcon from '../assets/icons/magic-hat.svg';
@@ -233,8 +233,8 @@ export default function Dashboard() {
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
+      const { data: { session } } = await insforge.auth.getCurrentSession();
+      const token = session?.accessToken;
 
       const res = await fetch(`${API_BASE}/api/contacts/export`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { insforge } from '../lib/insforge';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -17,14 +17,21 @@ export default function LoginPage() {
 
     try {
       if (mode === 'signup') {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await insforge.auth.signUp({
           email,
           password,
         });
         if (error) throw error;
-        alert('Check your email for the confirmation link!');
+        
+        if (data?.requireEmailVerification) {
+            alert('Check your email for the confirmation link!');
+        } else {
+            // Auto sign in if verification not required
+             alert('Sign up successful!');
+             setMode('signin');
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { error } = await insforge.auth.signInWithPassword({
           email,
           password,
         });

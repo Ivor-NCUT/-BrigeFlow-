@@ -41,28 +41,8 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
     return user.id;
   };
 
-  // Serve Static Files (Frontend)
-  // Assuming frontend build is in ../dist relative to backend root, or ./dist relative to project root
-  // When running from project root: tsx backend/src/server.ts, cwd is project root.
-  // So ./dist is correct.
-  app.use('/*', serveStatic({
-    root: './dist',
-    rewriteRequestPath: (path) => path === '/' ? '/index.html' : path
-  }));
-
-  // Fallback for SPA routing (return index.html for non-API routes)
-  app.get('*', async (c) => {
-    // Skip /api routes
-    if (c.req.path.startsWith('/api')) {
-        return c.notFound();
-    }
-    try {
-        const indexHtml = await readFile(join(process.cwd(), 'dist', 'index.html'), 'utf-8');
-        return c.html(indexHtml);
-    } catch (e) {
-        return c.text('Frontend not found. Did you run `npm run build`?', 404);
-    }
-  });
+  // ── Health Check (registered first, no deps, always works) ──
+  app.get('/api/health', (c) => c.json({ status: 'ok', ts: Date.now() }));
 
   // GET /api/contacts
   app.get('/api/contacts', async (c) => {
@@ -260,16 +240,28 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
   });
 
   // POST /api/contacts/import
-  const { createImportHandler } = await import('./api/import');
-  app.post('/api/contacts/import', createImportHandler(db));
+  try {
+    const { createImportHandler } = await import('./api/import');
+    app.post('/api/contacts/import', createImportHandler(db));
+  } catch (e) {
+    console.error('[WARN] Import handler failed to load:', e);
+  }
 
   // GET /api/contacts/template
-  const { downloadTemplateHandler } = await import('./api/template');
-  app.get('/api/contacts/template', downloadTemplateHandler);
+  try {
+    const { downloadTemplateHandler } = await import('./api/template');
+    app.get('/api/contacts/template', downloadTemplateHandler);
+  } catch (e) {
+    console.error('[WARN] Template handler failed to load:', e);
+  }
 
   // GET /api/contacts/export
-  const { createExportHandler } = await import('./api/export');
-  app.get('/api/contacts/export', createExportHandler(db));
+  try {
+    const { createExportHandler } = await import('./api/export');
+    app.get('/api/contacts/export', createExportHandler(db));
+  } catch (e) {
+    console.error('[WARN] Export handler failed to load (xlsx missing?):', e);
+  }
 
   // --- Shared Pages API ---
 
@@ -368,6 +360,24 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
     await db.delete(tables.sharedPages).where(and(eq(tables.sharedPages.id, id), eq(tables.sharedPages.userId, userId)));
     
     return c.json({ success: true });
+  });
+
+  // ── Static Files & SPA Fallback (MUST be after all API routes) ──
+  app.use('/*', serveStatic({
+    root: './dist',
+    rewriteRequestPath: (path) => path === '/' ? '/index.html' : path
+  }));
+
+  app.get('*', async (c) => {
+    if (c.req.path.startsWith('/api')) {
+      return c.notFound();
+    }
+    try {
+      const indexHtml = await readFile(join(process.cwd(), 'dist', 'index.html'), 'utf-8');
+      return c.html(indexHtml);
+    } catch (e) {
+      return c.text('Frontend not found. Did you run `npm run build`?', 404);
+    }
   });
 
   return app;

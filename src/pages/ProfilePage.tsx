@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 useUserStore 获取当前用户信息，依赖 supabase 进行登出
+ * [INPUT]: 依赖 useUserStore 获取当前用户信息，依赖 insforge 进行登出
  * [OUTPUT]: 对外提供 ProfilePage 组件，允许用户修改昵称、头像和退出登录
  * [POS]: pages/ProfilePage，个人中心页面
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

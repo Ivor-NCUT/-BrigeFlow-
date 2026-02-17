@@ -17,13 +17,6 @@ function RequireAuth({ children }: { children: JSX.Element }) {
   const location = useLocation();
 
   useEffect(() => {
-    // Check for Dev Mode override
-    if (localStorage.getItem('dev_mode') === 'true') {
-      setSession({ user: { id: 'dev-user' } });
-      setLoading(false);
-      return;
-    }
-
     insforge.auth.getCurrentSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);

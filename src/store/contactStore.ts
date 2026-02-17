@@ -12,7 +12,7 @@ interface ContactStore {
   contacts: Contact[];
   allTags: Tag[];
   relationships: Relationship[];
-  sharedPages: SharedPage[]; // Added
+  sharedPages: SharedPage[];
   filter: FilterState;
   shareConfig: ShareConfig;
   selectedContactId: string | null;
@@ -25,6 +25,7 @@ interface ContactStore {
   searchModalOpen: boolean;
   showAddRecordForm: boolean;
   addRecordInitialSummary: string;
+  importStatus: { isImporting: boolean; total: number; processed: number } | null;
 
   setFilter: (filter: Partial<FilterState>) => void;
   setSelectedContact: (id: string | null) => void;
@@ -37,6 +38,7 @@ interface ContactStore {
   setAddRecordInitialSummary: (summary: string) => void;
   setActiveView: (view: 'cards' | 'table' | 'gallery') => void;
   setCurrentPage: (page: string) => void;
+  setImportStatus: (status: { isImporting: boolean; total?: number; processed?: number } | null) => void;
   
   fetchData: () => Promise<void>;
   fetchSharedPages: () => Promise<void>; // Added
@@ -77,6 +79,7 @@ export const useContactStore = create<ContactStore>((set, get) => ({
   addRecordInitialSummary: '',
   activeView: 'table',
   currentPage: 'dashboard',
+  importStatus: null,
 
   setFilter: (f) => set((s) => ({ filter: { ...s.filter, ...f } })),
   setSelectedContact: (id) => set({ selectedContactId: id }),
@@ -89,6 +92,7 @@ export const useContactStore = create<ContactStore>((set, get) => ({
   setAddRecordInitialSummary: (summary) => set({ addRecordInitialSummary: summary }),
   setActiveView: (view) => set({ activeView: view }),
   setCurrentPage: (page) => set({ currentPage: page }),
+  setImportStatus: (status) => set({ importStatus: status }),
 
   fetchSharedPages: async () => {
     try {

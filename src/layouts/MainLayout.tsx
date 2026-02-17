@@ -5,7 +5,7 @@
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Search, Users, Clock, Share2, BarChart3, ChevronLeft, ChevronRight, Globe2, UserPlus, X, AlertCircle } from 'lucide-react';
+import { Search, Users, Clock, Share2, BarChart3, ChevronLeft, ChevronRight, Globe2, UserPlus, X, AlertCircle, Loader2 } from 'lucide-react';
 import { useContactStore } from '../store/contactStore';
 import { useUserStore } from '../store/userStore';
 import { useState, useEffect, useRef } from 'react';
@@ -24,7 +24,7 @@ const navItems = [
 ];
 
 export default function MainLayout() {
-  const { filter, setFilter, quickAddOpen, setQuickAddOpen, sidebarCollapsed, setSidebarCollapsed, getInactiveContacts, contacts, fetchData, searchModalOpen, setSearchModalOpen } = useContactStore();
+  const { filter, setFilter, quickAddOpen, setQuickAddOpen, sidebarCollapsed, setSidebarCollapsed, getInactiveContacts, contacts, fetchData, searchModalOpen, setSearchModalOpen, importStatus, setImportStatus } = useContactStore();
   const { user, fetchUser } = useUserStore();
   const [searchFocused, setSearchFocused] = useState(false);
   const location = useLocation();
@@ -142,6 +142,33 @@ export default function MainLayout() {
           </div>
         </div>
       </header>
+
+      {/* Import Progress Notification */}
+      <AnimatePresence>
+        {importStatus?.isImporting && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="sticky top-14 z-30 bg-blue-50 border-b border-blue-100"
+          >
+            <div className="max-w-7xl mx-auto px-6 py-2.5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <Loader2 size={16} className="animate-spin text-blue-600" />
+                <span className="text-sm text-blue-800">
+                  正在后台导入人脉数据...
+                </span>
+              </div>
+              <button
+                onClick={() => setImportStatus(null)}
+                className="p-1 hover:bg-blue-100 rounded-full transition-colors"
+              >
+                <X size={14} className="text-blue-600" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="flex flex-1 overflow-hidden relative">
         {/* ── Sidebar ── */}

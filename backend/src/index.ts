@@ -26,8 +26,12 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
 
   if (authMiddleware) {
     app.use('/api/*', async (c, next) => {
-      // Exclude public routes
-      if (c.req.path.startsWith('/api/shared-pages/public/')) {
+      // Exclude public routes, health check, and template download
+      if (
+        c.req.path.startsWith('/api/shared-pages/public/') ||
+        c.req.path === '/api/health' ||
+        c.req.path === '/api/contacts/template'
+      ) {
         return next();
       }
       return authMiddleware(c, next);

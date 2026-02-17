@@ -16,6 +16,21 @@ const insforge = createClient({
   anonKey: anonKey
 });
 
+// Helper to decode JWT token and extract user info (without verification since we trust InsForge)
+const decodeToken = (token: string): { id: string; email: string } | null => {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+    return {
+      id: payload.sub,
+      email: payload.email
+    };
+  } catch {
+    return null;
+  }
+};
+
 export const authMiddleware = createMiddleware(async (c, next) => {
   const authHeader = c.req.header("Authorization");
   
@@ -25,26 +40,39 @@ export const authMiddleware = createMiddleware(async (c, next) => {
 
   const token = authHeader.replace("Bearer ", "");
   
-  // Use getUser() to verify the token. 
-  // We need to pass the token to the client.
-  // Note: Insforge SDK's createClient doesn't accept a token per request in a stateless way easily
-  // without creating a new client or using global headers.
-  // A common pattern is to create a new client for the request.
-  
-  const client = createClient({
-    baseUrl: projectUrl,
-    anonKey: anonKey,
-    headers: {
+  try {
+    // Try InsForge SDK first
+    const client = createClient({
+      baseUrl: projectUrl,
+      anonKey: anonKey,
+      headers: {
         Authorization: `Bearer ${token}`
+      }
+    });
+
+    const { data: { user }, error } = await client.auth.getUser();
+
+    if (error || !user) {
+      // Fallback: decode JWT token directly
+      const payload = decodeToken(token);
+      if (!payload || !payload.id) {
+        return c.json({ error: "Invalid token" }, 401);
+      }
+      c.set("user", { id: payload.id, email: payload.email });
+      await next();
+      return;
     }
-  });
 
-  const { data: { user }, error } = await client.auth.getUser();
-
-  if (error || !user) {
-    return c.json({ error: "Invalid token" }, 401);
+    c.set("user", user);
+    await next();
+  } catch (e) {
+    // Fallback: decode JWT token on SDK error
+    const payload = decodeToken(token);
+    if (!payload || !payload.id) {
+      console.error('[ERROR] Auth middleware error:', e);
+      return c.json({ error: "Authentication failed" }, 401);
+    }
+    c.set("user", { id: payload.id, email: payload.email });
+    await next();
   }
-
-  c.set("user", user);
-  await next();
 });

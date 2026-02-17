@@ -4,7 +4,7 @@
  * [POS]: components/ImportModal，业务模态框组件，被 Dashboard 消费
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, FileDown, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { useContactStore } from '../store/contactStore';
@@ -18,20 +18,21 @@ interface ImportModalProps {
 
 export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<{ total: number; created: number; updated: number; errors: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const setImportStatus = useContactStore(s => s.setImportStatus);
 
   const handleDownloadTemplate = async () => {
     try {
-      const { data: { session } } = await insforge.auth.getCurrentSession();
-      const token = session?.accessToken;
+      const res = await fetch(`${API_BASE}/api/contacts/template`);
 
-      const res = await fetch(`${API_BASE}/api/contacts/template`, {
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-      });
-
-      if (!res.ok) throw new Error('下载失败');
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Error response:', errorText);
+        throw new Error(`下载失败: ${res.status}`);
+      }
 
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -42,7 +43,7 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Template download error:', err);
-      setError('模板下载失败，请检查网络连接');
+      setError(err instanceof Error ? err.message : '模板下载失败，请检查网络连接');
     }
   };
 
@@ -53,6 +54,7 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
     setIsUploading(true);
     setError(null);
     setResult(null);
+    setProgress(0);
 
     try {
       const { data: { session } } = await insforge.auth.getCurrentSession();
@@ -70,19 +72,41 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
       if (response.ok) {
         const res = await response.json();
         setResult(res);
+        setProgress(100);
+        setImportStatus({ isImporting: false, total: res.total, processed: res.total });
         useContactStore.getState().fetchData();
       } else {
         const err = await response.text();
         setError(`导入失败: ${err}`);
+        setImportStatus(null);
       }
     } catch (error) {
       console.error('Import error:', error);
       setError('导入出错，请检查网络或文件格式');
+      setImportStatus(null);
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
+
+  const handleClose = () => {
+    if (isUploading) {
+      setImportStatus({ isImporting: true, total: 0, processed: 0 });
+    }
+    setResult(null);
+    setError(null);
+    setProgress(0);
+    onClose();
+  };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setResult(null);
+      setError(null);
+      setProgress(0);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -93,7 +117,7 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-        onClick={onClose}
+        onClick={handleClose}
       >
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
@@ -107,7 +131,7 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
               <Upload className="w-5 h-5 text-primary" />
               批量导入人脉
             </h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+            <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 transition-colors">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -177,6 +201,24 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
                 </div>
               </div>
             </div>
+
+            {/* Progress Bar */}
+            {isUploading && (
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>正在导入...</span>
+                  <span>数据较多，请稍候</span>
+                </div>
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <motion.div 
+                    className="h-full bg-primary"
+                    initial={{ width: 0 }}
+                    animate={{ width: '100%' }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Results Display */}
             <AnimatePresence>

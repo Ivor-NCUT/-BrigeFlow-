@@ -28,11 +28,12 @@ const getRandomColor = () => {
 
 export const createImportHandler = (db: any) => async (c: Context) => {
   const userId = getUserId(c);
-  
-  // Parse body
+  console.log('[IMPORT] Starting import for userId:', userId);
+
+  // ── Parse body ────────────────────────────────────────────
   let csvContent = "";
   const contentType = c.req.header("Content-Type") || "";
-  
+
   if (contentType.includes("multipart/form-data")) {
     const body = await c.req.parseBody();
     const file = body['file'];
@@ -51,7 +52,7 @@ export const createImportHandler = (db: any) => async (c: Context) => {
     return c.json({ error: "Empty content" }, 400);
   }
 
-  // Parse CSV
+  // ── Parse CSV ─────────────────────────────────────────────
   let records: any[] = [];
   try {
     records = parse(csvContent, {
@@ -64,11 +65,22 @@ export const createImportHandler = (db: any) => async (c: Context) => {
       return c.json({ error: "Invalid CSV format", details: String(e) }, 400);
   }
 
+  console.log('[IMPORT] Parsed', records.length, 'rows. Columns:', records[0] ? Object.keys(records[0]) : 'none');
+
+  // ── DB connectivity pre-check ─────────────────────────────
+  try {
+    await db.select().from(tables.contacts).limit(1);
+  } catch (e: any) {
+    console.error('[IMPORT] DB connectivity check failed:', e);
+    return c.json({ error: "Database connection failed", details: e.message }, 500);
+  }
+
   const results = {
     total: records.length,
     created: 0,
     updated: 0,
-    errors: 0
+    errors: 0,
+    firstError: "",
   };
 
   // Process each record
@@ -187,10 +199,22 @@ export const createImportHandler = (db: any) => async (c: Context) => {
         }
       }
 
-    } catch (e) {
-      console.error("Error processing row:", row, e);
+    } catch (e: any) {
+      console.error("[IMPORT] Error processing row:", row['姓名'] || 'unknown', e.message);
       results.errors++;
+      if (!results.firstError) results.firstError = e.message;
     }
+  }
+
+  console.log('[IMPORT] Results:', results);
+
+  // If ALL rows failed, return 500 — something is fundamentally wrong
+  if (results.errors === results.total && results.total > 0) {
+    return c.json({
+      error: "All rows failed to import",
+      details: results.firstError,
+      ...results,
+    }, 500);
   }
 
   return c.json(results);

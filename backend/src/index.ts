@@ -8,7 +8,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import * as tables from "./db/schema";
 import { db as postgresDb } from "./db/index";
-import { eq, inArray, and } from "drizzle-orm";
+import { eq, inArray, and, sql } from "drizzle-orm";
 import { serveStatic } from '@hono/node-server/serve-static';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
@@ -16,6 +16,17 @@ import { join } from 'path';
 export async function createApp(authMiddleware?: any, dbOverride?: any): Promise<Hono> {
   const app = new Hono();
   const db = dbOverride || postgresDb;
+
+  // ── Global Error Handler ──────────────────────────────────
+  // Catch ALL unhandled exceptions, return structured error
+  app.onError((err, c) => {
+    console.error(`[ERROR] ${c.req.method} ${c.req.path}:`, err);
+    return c.json({
+      error: err.message || 'Internal Server Error',
+      path: c.req.path,
+      ts: Date.now(),
+    }, 500);
+  });
 
   app.use('/api/*', cors({
     origin: (origin) => origin,
@@ -45,30 +56,39 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
     return user.id;
   };
 
-  // ── Health Check (registered first, no deps, always works) ──
-  app.get('/api/health', (c) => c.json({ status: 'ok', ts: Date.now() }));
+  // ── Health Check (with DB connectivity test) ──────────────
+  app.get('/api/health', async (c) => {
+    try {
+      await db.execute(sql`SELECT 1`);
+      return c.json({ status: 'ok', db: 'connected', ts: Date.now() });
+    } catch (e: any) {
+      console.error('[HEALTH] DB connection failed:', e);
+      return c.json({ status: 'degraded', db: 'disconnected', error: e.message, ts: Date.now() }, 503);
+    }
+  });
 
   // GET /api/contacts
   app.get('/api/contacts', async (c) => {
     const userId = getUserId(c);
+    console.log('[GET /api/contacts] userId:', userId);
+
     const contacts = await db.select().from(tables.contacts).where(eq(tables.contacts.userId, userId));
-    
     const tags = await db.select().from(tables.tags).where(eq(tables.tags.userId, userId));
-    
+
     const contactsWithDetails = await Promise.all(contacts.map(async (contact) => {
       const contactTagsList = await db
         .select()
         .from(tables.contactTags)
         .where(eq(tables.contactTags.contactId, contact.id));
-        
+
       const tagIds = contactTagsList.map(ct => ct.tagId);
       const myTags = tags.filter(t => tagIds.includes(t.id));
-      
+
       const records = await db
         .select()
         .from(tables.communicationRecords)
         .where(eq(tables.communicationRecords.contactId, contact.id));
-        
+
       return {
         ...contact,
         tags: myTags,

@@ -19,7 +19,7 @@ interface ImportModalProps {
 export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [result, setResult] = useState<{ total: number; created: number; updated: number; errors: number } | null>(null);
+  const [result, setResult] = useState<{ total: number; created: number; updated: number; errors: number; firstError?: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const setImportStatus = useContactStore(s => s.setImportStatus);
@@ -76,8 +76,20 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
         setImportStatus({ isImporting: false, total: res.total, processed: res.total });
         useContactStore.getState().fetchData();
       } else {
-        const err = await response.text();
-        setError(`导入失败: ${err}`);
+        // Try to parse JSON error first, fallback to text
+        let errMsg = `导入失败 (${response.status})`;
+        try {
+          const errBody = await response.json();
+          errMsg = errBody.error || errBody.details || errMsg;
+          // If server returned partial results with error, show them
+          if (errBody.total !== undefined) {
+            setResult(errBody);
+          }
+        } catch {
+          const errText = await response.text();
+          if (errText) errMsg = errText;
+        }
+        setError(errMsg);
         setImportStatus(null);
       }
     } catch (error) {
@@ -227,18 +239,42 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="bg-green-50 rounded-xl p-4 border border-green-100"
+                  className={`rounded-xl p-4 border ${
+                    result.errors === result.total
+                      ? 'bg-red-50 border-red-100'
+                      : result.errors > 0
+                        ? 'bg-yellow-50 border-yellow-100'
+                        : 'bg-green-50 border-green-100'
+                  }`}
                 >
-                  <div className="flex items-center gap-2 text-green-700 font-semibold mb-2">
-                    <CheckCircle size={18} />
-                    导入完成
+                  <div className={`flex items-center gap-2 font-semibold mb-2 ${
+                    result.errors === result.total
+                      ? 'text-red-700'
+                      : result.errors > 0
+                        ? 'text-yellow-700'
+                        : 'text-green-700'
+                  }`}>
+                    {result.errors === result.total ? (
+                      <><AlertCircle size={18} />导入全部失败</>
+                    ) : result.errors > 0 ? (
+                      <><AlertCircle size={18} />导入部分完成</>
+                    ) : (
+                      <><CheckCircle size={18} />导入完成</>
+                    )}
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-sm text-green-800">
+                  <div className="grid grid-cols-2 gap-2 text-sm text-gray-800">
                     <div className="bg-white/50 px-2 py-1 rounded">总处理: {result.total}</div>
                     <div className="bg-white/50 px-2 py-1 rounded">新增: {result.created}</div>
                     <div className="bg-white/50 px-2 py-1 rounded">更新: {result.updated}</div>
-                    <div className="bg-white/50 px-2 py-1 rounded text-red-600">错误: {result.errors}</div>
+                    <div className={`bg-white/50 px-2 py-1 rounded ${result.errors > 0 ? 'text-red-600 font-medium' : ''}`}>
+                      错误: {result.errors}
+                    </div>
                   </div>
+                  {result.firstError && (
+                    <p className="mt-2 text-xs text-red-600 bg-white/50 px-2 py-1 rounded">
+                      错误详情: {result.firstError}
+                    </p>
+                  )}
                 </motion.div>
               )}
 

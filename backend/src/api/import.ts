@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 csv-parse 解析 CSV，依赖 db 进行数据持久化
  * [OUTPUT]: 对外提供 createImportHandler 工厂函数，生成 Hono 路由处理函数
- * [POS]: backend/src/api/import.ts，处理人脉数据批量导入的核心业务逻辑
+ * [POS]: backend/src/api/import.ts，处理关系资产数据批量导入的核心业务逻辑
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { Context } from "hono";

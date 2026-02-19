@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 useContactStore 获取 contacts 和 relationships，依赖 framer-motion 进行动画
  * [OUTPUT]: 对外提供 NetworkGraph 页面，支持节点拖拽、连线模式、关系编辑
- * [POS]: pages/NetworkGraph，人脉可视化核心界面
+ * [POS]: pages/NetworkGraph，关系资产可视化核心界面
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import React, { useEffect, useRef, useState } from 'react';
@@ -341,7 +341,7 @@ export default function NetworkGraph() {
       ctx.fillStyle = '#9CA3AF';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'bottom';
-      ctx.fillText(`${nodes.length} 人脉 · ${edges.length} 关系`, w - 12, h - 12);
+      ctx.fillText(`${nodes.length} 资产 · ${edges.length} 关系`, w - 12, h - 12);
 
       animRef.current = requestAnimationFrame(loop);
     };
@@ -535,8 +535,8 @@ export default function NetworkGraph() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">人脉关系图谱</h1>
-          <p className="text-sm text-gray-500 mt-1">可视化你的人脉网络，点击节点查看详情</p>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">关系资产图谱</h1>
+          <p className="text-sm text-gray-500 mt-1">可视化你的关系网络，点击节点查看详情</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={toggleLinkMode} className={`p-2 rounded-lg border transition-colors ${isLinkModeRef.current ? 'bg-primary text-white border-primary' : 'bg-white border-gray-200 hover:bg-gray-50'}`} title={isLinkModeRef.current ? '退出连线模式' : '进入连线模式'}>
@@ -563,7 +563,7 @@ export default function NetworkGraph() {
           <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-2">图例</p>
           <div className="space-y-1 text-xs text-gray-500">
             <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-primary" /> 节点大小 = 互动频率</div>
-            <div className="flex items-center gap-2"><div className="w-6 h-0.5 bg-gray-500 rounded" /> 连线 = 人脉关系</div>
+            <div className="flex items-center gap-2"><div className="w-6 h-0.5 bg-gray-500 rounded" /> 连线 = 资产关系</div>
           </div>
         </div>
       </div>
@@ -602,7 +602,7 @@ export default function NetworkGraph() {
                   <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">{selectedNode.notes || '暂无备注'}</p>
                 </div>
                 <div>
-                  <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">关联人脉</h4>
+                  <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">关联资产</h4>
                   <div className="space-y-2">
                     {selectedNode.connections.map(cId => {
                       const c = contacts.find(cc => cc.id === cId);

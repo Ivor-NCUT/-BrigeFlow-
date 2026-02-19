@@ -16,7 +16,7 @@ import FilterSidebar from '../components/FilterSidebar';
 import ThemeToggle from '../components/ThemeToggle';
 
 const navItems = [
-  { path: '/', label: '人脉总览', icon: Users },
+  { path: '/', label: '资产总览', icon: Users },
   { path: '/timeline', label: '沟通记录', icon: Clock },
   { path: '/network', label: '关系图谱', icon: Globe2 },
   { path: '/report', label: '社交周报', icon: BarChart3 },
@@ -156,7 +156,7 @@ export default function MainLayout() {
               <div className="flex items-center gap-2.5">
                 <Loader2 size={16} className="animate-spin text-blue-600" />
                 <span className="text-sm text-blue-800">
-                  正在后台导入人脉数据...
+                  正在后台导入关系资产数据...
                 </span>
               </div>
               <button

@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 contactStore 进行关系数据操作 (addRelationship)
- * [OUTPUT]: 对外提供 RelationshipModal 组件，用于建立人脉间的连接
+ * [OUTPUT]: 对外提供 RelationshipModal 组件，用于建立资产间的连接
  * [POS]: components/RelationshipModal，业务模态框组件，被 Dashboard 和 Timeline 消费
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */

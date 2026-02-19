@@ -11,7 +11,7 @@ import { Search, Briefcase, Hash, UserPlus, FileText, Layout, GitFork, Clock, Me
 import { motion, AnimatePresence } from 'framer-motion';
 
 const PAGES = [
-  { label: '人脉总览', keywords: ['人脉', '总览', 'dashboard', 'home'], path: '/', icon: Layout },
+  { label: '资产总览', keywords: ['资产', '总览', 'dashboard', 'home'], path: '/', icon: Layout },
   { label: '沟通记录', keywords: ['沟通', '记录', 'timeline', 'history'], path: '/timeline', icon: Clock },
   { label: '关系图谱', keywords: ['关系', '图谱', 'network', 'graph'], path: '/network', icon: GitFork },
   { label: '社交周报', keywords: ['周报', 'report', 'analysis'], path: '/report', icon: FileText },
@@ -81,7 +81,7 @@ export default function GlobalSearchModal() {
               ref={inputRef}
               type="text"
               className="flex-1 text-base outline-none placeholder:text-text-tertiary text-text-primary dark:text-text-primary-dark bg-transparent"
-              placeholder="搜索人脉、记录、关系或跳转页面..."
+              placeholder="搜索资产、记录、关系或跳转页面..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -96,7 +96,7 @@ export default function GlobalSearchModal() {
               <div className="py-10 text-center text-text-secondary">
                 <p className="text-sm">输入关键词全局搜索</p>
                 <div className="flex justify-center gap-3 mt-3 text-xs">
-                  {['人脉', '沟通记录', '关系图谱'].map(t => (
+                  {['资产', '沟通记录', '关系图谱'].map(t => (
                     <span key={t} className="bg-fill-quaternary px-2 py-0.5 rounded">{t}</span>
                   ))}
                 </div>
@@ -136,7 +136,7 @@ export default function GlobalSearchModal() {
 
                 {filteredContacts.length > 0 && (
                   <div className="mb-1">
-                    <div className={sectionHeader}>人脉</div>
+                    <div className={sectionHeader}>资产</div>
                     {filteredContacts.map(contact => (
                       <button key={contact.id} onClick={() => handleContactSelect(contact.name)} className={rowCls}>
                         <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-medium text-xs mr-3 shrink-0" style={{ backgroundColor: getAvatarColor(contact.name) }}>

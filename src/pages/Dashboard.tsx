@@ -1,6 +1,6 @@
 /**
- * [INPUT]: 依赖 contactStore 获取人脉数据，依赖 RelationshipModal 处理关系连接
- * [OUTPUT]: 对外提供 Dashboard 页面组件，展示人脉总览、卡片/表格视图
+ * [INPUT]: 依赖 contactStore 获取关系资产数据，依赖 RelationshipModal 处理关系连接
+ * [OUTPUT]: 对外提供 Dashboard 页面组件，展示资产总览、卡片/表格视图
  * [POS]: pages/Dashboard，系统的核心着陆页，提供数据概览与操作入口
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
@@ -133,7 +133,7 @@ function ContactCard({ contact, index, onEdit, selected, onSelect, onConnect }: 
                 </div>
                 <div className="bg-white dark:bg-grey-800 rounded-xl p-3 text-center border border-border/50 dark:border-grey-700">
                   <div className="text-lg font-semibold text-accent-amber">{contact.connections.length}</div>
-                  <div className="text-[11px] text-text-secondary mt-0.5">关联人脉</div>
+                  <div className="text-[11px] text-text-secondary mt-0.5">关联资产</div>
                 </div>
               </div>
 
@@ -289,7 +289,7 @@ export default function Dashboard() {
       {/* Page header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-semibold text-text-primary dark:text-text-primary-dark tracking-tight">人脉总览</h1>
+          <h1 className="text-2xl font-semibold text-text-primary dark:text-text-primary-dark tracking-tight">资产总览</h1>
           <p className="text-sm text-text-secondary mt-1">共 {contacts.length} 位联系人</p>
         </div>
         <div className="flex items-center gap-3">

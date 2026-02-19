@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 xlsx 生成 Excel，依赖 db 查询全量用户数据
  * [OUTPUT]: 对外提供 createExportHandler 工厂函数，生成多 Sheet Excel 下载
- * [POS]: backend/src/api/export.ts，人脉数据批量导出的核心业务逻辑
+ * [POS]: backend/src/api/export.ts，关系资产数据批量导出的核心业务逻辑
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { Context } from "hono";
@@ -66,7 +66,7 @@ export const createExportHandler = (db: any) => async (c: Context) => {
   // ── 2. build sheets ──
   const wb = XLSX.utils.book_new();
 
-  // Sheet 1: 人脉信息
+  // Sheet 1: 资产信息
   const contactRows = contacts.map((c: any) => {
     const myTags = contactTagsMap.get(c.id) || [];
     const byCategory = (cat: string) =>
@@ -87,7 +87,7 @@ export const createExportHandler = (db: any) => async (c: Context) => {
       互动次数: c.interactionCount ?? 0,
     };
   });
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(contactRows), "人脉信息");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(contactRows), "资产信息");
 
   // Sheet 2: 沟通记录
   const commRows = userRecords.map((r: any) => ({

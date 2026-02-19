@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 backend API 下载模板和上传文件
- * [OUTPUT]: 对外提供 ImportModal 组件，用于批量导入人脉数据
+ * [OUTPUT]: 对外提供 ImportModal 组件，用于批量导入关系资产数据
  * [POS]: components/ImportModal，业务模态框组件，被 Dashboard 消费
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
@@ -141,7 +141,7 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
           <div className="p-6 border-b border-gray-100 flex justify-between items-center">
             <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
               <Upload className="w-5 h-5 text-primary" />
-              批量导入人脉
+              批量导入关系资产
             </h2>
             <button onClick={handleClose} className="text-gray-400 hover:text-gray-600 transition-colors">
               <X className="w-5 h-5" />
@@ -158,7 +158,7 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">下载导入模板</h3>
                   <p className="text-sm text-gray-600 mb-3">
-                    请先下载 CSV 模板，按照格式填写人脉信息。
+                    请先下载 CSV 模板，按照格式填写关系资产信息。
                     <br />
                     支持：姓名、职位、公司、标签、互动记录等字段。
                   </p>

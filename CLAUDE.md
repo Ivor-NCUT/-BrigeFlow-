@@ -1,4 +1,4 @@
-# 缘脉BridgeFlow - 人脉可视化与管理系统
+# 缘脉BridgeFlow - 关系资产可视化与管理系统
 React + TypeScript + Vite + Hono + Drizzle + Tailwind
 
 ## 设计系统

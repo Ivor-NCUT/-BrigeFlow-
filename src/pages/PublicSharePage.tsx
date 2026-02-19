@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖后端 API 获取公开分享页配置，依赖 URL slug 参数
- * [OUTPUT]: 对外提供 PublicSharePage 页面，展示特定的人脉分享内容
+ * [OUTPUT]: 对外提供 PublicSharePage 页面，展示特定的关系资产分享内容
  * [POS]: pages/PublicSharePage，公开访问的分享页视图
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
@@ -116,7 +116,7 @@ export default function PublicSharePage() {
 
             {/* Contacts Grid */}
             <div>
-                <h3 className="text-sm font-semibold text-text-primary mb-4">人脉伙伴</h3>
+                <h3 className="text-sm font-semibold text-text-primary mb-4">资产伙伴</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {contacts.map(c => (
                         <div key={c.id} className="flex items-center gap-3 p-3 bg-fill-quaternary rounded-xl">

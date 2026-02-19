@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 useContactStore 获取 contacts, sharedPages, filter 等状态
- * [OUTPUT]: 对外提供 SharePage 页面，支持创建、管理、筛选和生成特定人脉分享链接
+ * [OUTPUT]: 对外提供 SharePage 页面，支持创建、管理、筛选和生成特定关系资产分享链接
  * [POS]: pages/SharePage，分享功能的核心入口
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
@@ -153,7 +153,7 @@ export default function SharePage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-semibold text-text-primary tracking-tight">分享页面管理</h1>
-            <p className="text-sm text-text-secondary mt-1">创建和管理特定的人脉分享列表</p>
+            <p className="text-sm text-text-secondary mt-1">创建和管理特定的关系资产分享列表</p>
           </div>
           <button
             onClick={handleCreate}
@@ -387,7 +387,7 @@ export default function SharePage() {
 
                         {/* Contacts Grid */}
                         <div>
-                            <h3 className="text-sm font-semibold text-text-primary mb-4">人脉伙伴</h3>
+                            <h3 className="text-sm font-semibold text-text-primary mb-4">资产伙伴</h3>
                             <div className="grid grid-cols-2 gap-3">
                                 {selectedContactsList.map(c => (
                                     <div key={c.id} className="flex items-center gap-3 p-3 bg-fill-quaternary rounded-xl">

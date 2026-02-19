@@ -111,7 +111,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-text-primary">缘脉 BridgeFlow</h1>
           <p className="text-text-secondary mt-2">
-            {mode === 'signin' ? '登录以管理您的人脉' : mode === 'signup' ? '注册新账号' : '验证邮箱'}
+            {mode === 'signin' ? '登录以管理您的关系资产' : mode === 'signup' ? '注册新账号' : '验证邮箱'}
           </p>
         </div>
         

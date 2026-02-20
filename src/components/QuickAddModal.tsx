@@ -1,14 +1,15 @@
 /**
- * [INPUT]: 依赖 useContactStore 管理联系人状态，依赖 lucide-react 提供图标
+ * [INPUT]: 依赖 useContactStore 管理联系人状态，依赖 lucide-react 提供图标，依赖 SmartInput/SmartTagInput 组件
  * [OUTPUT]: 对外提供 QuickAddModal 组件，用于快速录入和编辑联系人
  * [POS]: components/QuickAddModal，作为全局模态框被 MainLayout 或 App 消费
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, UserPlus, Building2, StickyNote, Link2, Plus } from 'lucide-react';
+import { X, UserPlus, Building2, StickyNote, Link2, Plus, Check } from 'lucide-react';
 import { useContactStore } from '../store/contactStore';
 import type { Tag, Contact } from '../types/contact';
+import { SmartInput, SmartTagInput } from './SmartInput';
 
 const TAG_COLORS: Record<string, string> = {
   industry: '#007AFF',
@@ -25,12 +26,50 @@ export default function QuickAddModal({}: QuickAddModalProps) {
   const { setQuickAddOpen, allTags, addContact, updateContact, editingContactId, contacts, setEditingContactId, quickAddInitialName, setQuickAddInitialName, filter } = useContactStore();
   const contact = editingContactId ? contacts.find(c => c.id === editingContactId) : null;
 
+  const companySuggestions = useMemo(() => {
+    const companies = new Set<string>();
+    contacts.forEach(c => {
+      if (c.company && c.company.trim()) {
+        companies.add(c.company.trim());
+      }
+    });
+    return Array.from(companies).sort();
+  }, [contacts]);
+
+  const industrySuggestions = useMemo(() => {
+    return allTags
+      .filter(t => t.category === 'industry')
+      .map(t => t.label)
+      .sort();
+  }, [allTags]);
+
+  const skillSuggestions = useMemo(() => {
+    return allTags
+      .filter(t => t.category === 'skill')
+      .map(t => t.label)
+      .sort();
+  }, [allTags]);
+
+  const roleSuggestions = useMemo(() => {
+    return allTags
+      .filter(t => t.category === 'role')
+      .map(t => t.label)
+      .sort();
+  }, [allTags]);
+
+  const relationshipSuggestions = useMemo(() => {
+    return allTags
+      .filter(t => t.category === 'relationship')
+      .map(t => t.label)
+      .sort();
+  }, [allTags]);
+
   const [form, setForm] = useState({
     name: '', company: '', bonjourLink: '', notes: '',
     tags: [] as Tag[],
   });
   const [tagInputs, setTagInputs] = useState({
-    industry: '', skill: '', role: '',
+    industry: '', skill: '', role: '', relationship: '',
   });
 
   useEffect(() => {
@@ -54,6 +93,10 @@ export default function QuickAddModal({}: QuickAddModalProps) {
         const tag = allTags.find(t => t.category === 'role' && t.label === filter.role);
         if (tag) activeTags.push(tag);
       }
+      if (filter.relationship) {
+        const tag = allTags.find(t => t.category === 'relationship' && t.label === filter.relationship);
+        if (tag) activeTags.push(tag);
+      }
       setForm({
         name: quickAddInitialName || '', company: '', bonjourLink: '', notes: '',
         tags: activeTags,
@@ -67,7 +110,7 @@ export default function QuickAddModal({}: QuickAddModalProps) {
     setQuickAddInitialName('');
   };
 
-  const addTag = (label: string, category: 'industry' | 'skill' | 'role') => {
+  const addTag = (label: string, category: 'industry' | 'skill' | 'role' | 'relationship') => {
     const trimmed = label.trim();
     if (!trimmed || form.tags.some(t => t.label === trimmed && t.category === category)) return;
     const existing = allTags.find(t => t.label === trimmed && t.category === category);
@@ -76,28 +119,38 @@ export default function QuickAddModal({}: QuickAddModalProps) {
       label: trimmed, category, color: TAG_COLORS[category],
     };
     setForm(f => ({ ...f, tags: [...f.tags, newTag] }));
-    setTagInputs(prev => ({ ...prev, [category]: '' }));
   };
 
   const removeTag = (tagId: string) => {
     setForm(f => ({ ...f, tags: f.tags.filter(t => t.id !== tagId) }));
   };
 
-  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, category: 'industry' | 'skill' | 'role') => {
+  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, category: 'industry' | 'skill' | 'role' | 'relationship') => {
     if (e.key === 'Enter') { e.preventDefault(); addTag(tagInputs[category], category); }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name) return;
     const contactData = {
       name: form.name, company: form.company, bonjourLink: form.bonjourLink,
       notes: form.notes, tags: form.tags, avatar: '',
-      createdAt: new Date().toISOString().split('T')[0],
-      lastContactedAt: new Date().toISOString().split('T')[0],
     };
-    if (contact) updateContact(contact.id, contactData); else addContact(contactData);
-    handleClose();
+    try {
+      if (contact) {
+        updateContact(contact.id, contactData);
+      } else {
+        addContact({
+          ...contactData,
+          createdAt: new Date().toISOString().split('T')[0],
+          lastContactedAt: new Date().toISOString().split('T')[0],
+        });
+      }
+      handleClose();
+    } catch (error) {
+      console.error('保存失败:', error);
+      alert('保存失败，请重试');
+    }
   };
 
   /* ── Input field helper ── */
@@ -132,33 +185,36 @@ export default function QuickAddModal({}: QuickAddModalProps) {
 
             <div>
               <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">公司/组织</label>
-              <div className="relative">
-                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" size={15} />
-                <input type="text" value={form.company} onChange={e => setForm(f => ({ ...f, company: e.target.value }))} className={inputCls} placeholder="所属公司或组织" />
-              </div>
+              <SmartInput
+                value={form.company}
+                onChange={company => setForm(f => ({ ...f, company }))}
+                suggestions={companySuggestions}
+                placeholder="所属公司或组织"
+                icon={<Building2 size={15} />}
+                inputClassName="bg-grey-50 dark:bg-grey-800 border border-border dark:border-grey-700 rounded-lg text-sm text-text-primary dark:text-text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-text-tertiary"
+              />
             </div>
 
             {/* Tag sections */}
             <div className="space-y-3">
-              {([['industry', '行业标签'], ['skill', '专业技能标签'], ['role', '岗位标签']] as const).map(([cat, label]) => (
+              {([
+                ['industry', '行业标签', industrySuggestions, '#007AFF'],
+                ['skill', '专业技能标签', skillSuggestions, '#5AC8FA'],
+                ['role', '岗位标签', roleSuggestions, '#FF3B30'],
+                ['relationship', '第一次认识渠道', relationshipSuggestions, '#34C759'],
+              ] as const).map(([cat, label, suggestions, color]) => (
                 <div key={cat}>
                   <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1">{label}</label>
-                  <div className="bg-grey-50 dark:bg-grey-800 border border-border dark:border-grey-700 rounded-lg p-2 min-h-[38px] flex flex-wrap gap-1.5">
-                    {form.tags.filter(t => t.category === cat).map(tag => (
-                      <span key={tag.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-pill text-xs font-medium text-white" style={{ backgroundColor: tag.color }}>
-                        {tag.label}
-                        <button type="button" onClick={() => removeTag(tag.id)} className="hover:opacity-80"><X size={11} /></button>
-                      </span>
-                    ))}
-                    <input
-                      type="text"
-                      value={tagInputs[cat]}
-                      onChange={e => setTagInputs(prev => ({ ...prev, [cat]: e.target.value }))}
-                      onKeyDown={e => handleTagKeyDown(e, cat)}
-                      className="bg-transparent text-sm min-w-[60px] flex-1 focus:outline-none text-text-primary dark:text-text-primary-dark placeholder:text-text-tertiary"
-                      placeholder={`输入${label.replace('标签', '')}...`}
-                    />
-                  </div>
+                  <SmartTagInput
+                    value={tagInputs[cat as 'industry' | 'skill' | 'role' | 'relationship']}
+                    onChange={val => setTagInputs(prev => ({ ...prev, [cat]: val }))}
+                    selectedTags={form.tags.filter(t => t.category === cat)}
+                    onRemoveTag={removeTag}
+                    suggestions={suggestions}
+                    placeholder={`输入${label.replace('标签', '').replace('第一次认识', '')}...`}
+                    tagColor={color}
+                    onAddTag={label => addTag(label, cat as 'industry' | 'skill' | 'role' | 'relationship')}
+                  />
                 </div>
               ))}
             </div>

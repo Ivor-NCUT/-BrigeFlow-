@@ -6,7 +6,7 @@
  */
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, ArrowRight, Plus, Check, Handshake, ShoppingBag, Ticket, Briefcase, MoreHorizontal, X, Link2 } from 'lucide-react';
+import { Calendar, ArrowRight, Plus, Check, Handshake, ShoppingBag, Ticket, Briefcase, MoreHorizontal, X, Link2, Clock } from 'lucide-react';
 import RelationshipModal from '../components/RelationshipModal';
 import { useContactStore } from '../store/contactStore';
 import type { CommunicationRecord } from '../types/contact';
@@ -26,16 +26,20 @@ export default function Timeline() {
   const [selectedContactIds, setSelectedContactIds] = useState<string[]>([]);
   const [comboboxInput, setComboboxInput] = useState('');
   const [isComboboxOpen, setIsComboboxOpen] = useState(false);
-  const [newRecord, setNewRecord] = useState({ type: 'connection' as CommunicationRecord['type'], summary: '', details: '', followUpDate: '', followUpNote: '' });
+  const [newRecord, setNewRecord] = useState({ type: 'connection' as CommunicationRecord['type'], summary: '', followUpDate: '', followUpNote: '', followUpDeadline: '' });
+  const [showFollowUpDeadlinePicker, setShowFollowUpDeadlinePicker] = useState(false);
   const [relationshipModalOpen, setRelationshipModalOpen] = useState(false);
   const [relationshipSourceId, setRelationshipSourceId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (showAddRecordForm && !newRecord.followUpDate) {
+      setNewRecord(prev => ({ ...prev, followUpDate: new Date().toISOString().split('T')[0] }));
+    }
     if (addRecordInitialSummary) {
       setNewRecord(prev => ({ ...prev, summary: addRecordInitialSummary }));
       setAddRecordInitialSummary('');
     }
-  }, [addRecordInitialSummary, setAddRecordInitialSummary]);
+  }, [addRecordInitialSummary, setAddRecordInitialSummary, showAddRecordForm, newRecord.followUpDate]);
 
   const allRecords = contacts.flatMap(c => (c.communicationRecords || []).map(r => ({ ...r, contact: c }))).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   const grouped = allRecords.reduce((acc, r) => { if (!acc[r.date]) acc[r.date] = []; acc[r.date].push(r); return acc; }, {} as Record<string, typeof allRecords>);
@@ -45,12 +49,12 @@ export default function Timeline() {
     selectedContactIds.forEach(id => {
       addCommunicationRecord(id, {
         contactId: id, date: new Date().toISOString().split('T')[0], type: newRecord.type,
-        summary: newRecord.summary, details: newRecord.details,
-        ...(newRecord.followUpDate ? { followUp: { date: newRecord.followUpDate, note: newRecord.followUpNote, done: false } } : {}),
+        summary: newRecord.summary,
+        ...(newRecord.followUpDate ? { followUp: { date: newRecord.followUpDeadline || newRecord.followUpDate, note: newRecord.followUpNote, done: false } } : {}),
       });
     });
     setShowAddRecordForm(false);
-    setNewRecord({ type: 'connection', summary: '', details: '', followUpDate: '', followUpNote: '' });
+    setNewRecord({ type: 'connection', summary: '', followUpDate: new Date().toISOString().split('T')[0], followUpNote: '', followUpDeadline: '' });
     setSelectedContactIds([]); setComboboxInput('');
   };
 
@@ -123,22 +127,28 @@ export default function Timeline() {
             </div>
           </div>
           <div className="mb-4">
-            <label className="text-xs font-medium text-text-secondary mb-1 block">摘要</label>
-            <input type="text" value={newRecord.summary} onChange={e => setNewRecord(r => ({ ...r, summary: e.target.value }))} placeholder="简要描述此次沟通" className={inputCls} />
-          </div>
-          <div className="mb-4">
-            <label className="text-xs font-medium text-text-secondary mb-1 block">详情</label>
-            <textarea value={newRecord.details} onChange={e => setNewRecord(r => ({ ...r, details: e.target.value }))} placeholder="记录详细内容..." rows={3}
+            <label className="text-xs font-medium text-text-secondary mb-1 block">沟通记录</label>
+            <textarea value={newRecord.summary} onChange={e => setNewRecord(r => ({ ...r, summary: e.target.value }))} placeholder="记录此次沟通内容..." rows={3}
               className="w-full px-3 py-2 rounded-lg border border-border dark:border-grey-700 text-sm bg-white dark:bg-grey-800 resize-none focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 text-text-primary dark:text-text-primary-dark" />
           </div>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="text-xs font-medium text-text-secondary mb-1 block">跟进日期（可选）</label>
+              <label className="text-xs font-medium text-text-secondary mb-1 block">跟进日期</label>
               <input type="date" value={newRecord.followUpDate} onChange={e => setNewRecord(r => ({ ...r, followUpDate: e.target.value }))} className={inputCls} />
             </div>
-            <div>
-              <label className="text-xs font-medium text-text-secondary mb-1 block">跟进备注</label>
-              <input type="text" value={newRecord.followUpNote} onChange={e => setNewRecord(r => ({ ...r, followUpNote: e.target.value }))} placeholder="需要跟进的事项..." className={inputCls} />
+            <div className="relative">
+              <label className="text-xs font-medium text-text-secondary mb-1 block">跟进任务</label>
+              <div className="flex gap-1">
+                <input type="text" value={newRecord.followUpNote} onChange={e => setNewRecord(r => ({ ...r, followUpNote: e.target.value }))} placeholder="需要跟进的事项..." className="flex-1 h-9 px-3 rounded-lg border border-border dark:border-grey-700 text-sm bg-white dark:bg-grey-800 text-text-primary dark:text-text-primary-dark focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10" />
+                <button type="button" onClick={() => setShowFollowUpDeadlinePicker(!showFollowUpDeadlinePicker)} className="h-9 px-2 rounded-lg border border-border dark:border-grey-700 bg-fill-quaternary hover:bg-fill-secondary text-text-secondary flex items-center gap-1 text-xs">
+                  <Clock size={14} />
+                </button>
+              </div>
+              {showFollowUpDeadlinePicker && (
+                <div className="absolute top-full left-0 mt-1 p-2 bg-white dark:bg-grey-800 rounded-lg border border-border dark:border-grey-700 shadow-lg z-20">
+                  <input type="date" value={newRecord.followUpDeadline} onChange={e => { setNewRecord(r => ({ ...r, followUpDeadline: e.target.value })); setShowFollowUpDeadlinePicker(false); }} className="text-xs" />
+                </div>
+              )}
             </div>
           </div>
           <div className="flex justify-end gap-2.5">

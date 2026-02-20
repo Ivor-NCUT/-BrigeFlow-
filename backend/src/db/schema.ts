@@ -40,7 +40,6 @@ export const communicationRecords = pgTable("communication_records", {
   date: text("date").notNull(),
   type: text("type").notNull(),
   summary: text("summary").notNull(),
-  details: text("details"),
   followUpDate: text("follow_up_date"),
   followUpNote: text("follow_up_note"),
   followUpDone: boolean("follow_up_done"),

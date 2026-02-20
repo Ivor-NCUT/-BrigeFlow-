@@ -237,12 +237,20 @@ export const useContactStore = create<ContactStore>((set, get) => ({
   },
 
   updateContact: async (id, updates) => {
+    console.log('[updateContact] 请求更新联系人:', id, updates);
     const res = await client.api.fetch(`/api/contacts/${id}`, {
       method: 'PUT',
       body: JSON.stringify(updates)
     });
+    console.log('[updateContact] 响应状态:', res.status, res.ok);
     if (res.ok) {
+      const data = await res.json();
+      console.log('[updateContact] 更新成功，返回数据:', data);
       get().fetchData();
+    } else {
+      const errorText = await res.text();
+      console.error('[updateContact] 更新失败:', res.status, errorText);
+      throw new Error(`更新失败: ${res.status} - ${errorText}`);
     }
   },
 

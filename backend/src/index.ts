@@ -114,12 +114,28 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
     }).returning();
     
     if (tags && tags.length > 0) {
-      await Promise.all(tags.map((tag: any) => 
-        db.insert(tables.contactTags).values({
+      for (const tag of tags) {
+        const existingTag = await db.select().from(tables.tags)
+          .where(and(eq(tables.tags.id, tag.id), eq(tables.tags.userId, userId)))
+          .limit(1);
+        
+        let tagId = tag.id;
+        if (existingTag.length === 0) {
+          const [newTag] = await db.insert(tables.tags).values({
+            id: tag.id,
+            userId: userId,
+            label: tag.label,
+            category: tag.category,
+            color: tag.color,
+          }).returning();
+          tagId = newTag.id;
+        }
+        
+        await db.insert(tables.contactTags).values({
           contactId: newContact.id,
-          tagId: tag.id
-        })
-      ));
+          tagId: tagId,
+        }).onConflictDoNothing();
+      }
     }
     
     return c.json(newContact);
@@ -190,15 +206,30 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
       return c.json({ error: "Contact not found or unauthorized" }, 404);
     }
       
-    if (tags) {
+    if (tags && tags.length > 0) {
       await db.delete(tables.contactTags).where(eq(tables.contactTags.contactId, id));
-      if (tags.length > 0) {
-        await Promise.all(tags.map((tag: any) => 
-          db.insert(tables.contactTags).values({
-            contactId: id,
-            tagId: tag.id
-          })
-        ));
+      
+      for (const tag of tags) {
+        const existingTag = await db.select().from(tables.tags)
+          .where(and(eq(tables.tags.id, tag.id), eq(tables.tags.userId, userId)))
+          .limit(1);
+        
+        let tagId = tag.id;
+        if (existingTag.length === 0) {
+          const [newTag] = await db.insert(tables.tags).values({
+            id: tag.id,
+            userId: userId,
+            label: tag.label,
+            category: tag.category,
+            color: tag.color,
+          }).returning();
+          tagId = newTag.id;
+        }
+        
+        await db.insert(tables.contactTags).values({
+          contactId: id,
+          tagId: tagId,
+        }).onConflictDoNothing();
       }
     }
     

@@ -11,7 +11,6 @@ export interface CommunicationRecord {
   date: string;
   type: 'connection' | 'purchase' | 'invitation' | 'service' | 'other';
   summary: string;
-  details: string;
   followUp?: {
     date: string;
     note: string;

@@ -77,9 +77,25 @@ export const sharedPages = pgTable("shared_pages", {
   userId: text("user_id").notNull(),
   slug: text("slug").notNull().unique(),
   title: text("title").notNull(),
-  config: text("config").notNull(), // JSON string: { contactIds: string[], showIndustry: boolean, etc. }
+  config: text("config").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({
   userIdIdx: index("shared_pages_user_id_idx").on(table.userId),
   slugIdx: index("shared_pages_slug_idx").on(table.slug),
+}));
+
+export const apiConfigs = pgTable("api_configs", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  name: text("name").notNull(),
+  provider: text("provider").notNull(),
+  config: text("config").notNull(),
+  enabled: boolean("enabled").default(true),
+  lastSyncAt: timestamp("last_sync_at"),
+  syncStatus: text("sync_status").default('idle'),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdIdx: index("api_configs_user_id_idx").on(table.userId),
+  providerIdx: index("api_configs_provider_idx").on(table.provider),
 }));

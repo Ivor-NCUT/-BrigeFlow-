@@ -1,13 +1,14 @@
 /**
  * [INPUT]: 依赖 useUserStore 获取当前用户信息，依赖 insforge 进行登出
- * [OUTPUT]: 对外提供 ProfilePage 组件，允许用户修改昵称、头像和退出登录
+ * [OUTPUT]: 对外提供 ProfilePage 组件，允许用户修改昵称、头像、API配置和退出登录
  * [POS]: pages/ProfilePage，个人中心页面
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { useState, useEffect, useRef } from 'react';
 import { useUserStore } from '../store/userStore';
 import { useNavigate } from 'react-router-dom';
-import { Camera, Save, LogOut, User as UserIcon, Upload } from 'lucide-react';
+import { Camera, Save, LogOut, User as UserIcon, Upload, Settings, RefreshCw, Database, ExternalLink } from 'lucide-react';
+import ApiConfigPanel from '../components/ApiConfigPanel';
 
 export default function ProfilePage() {
   const { user, updateProfile, uploadAvatar, signOut } = useUserStore();
@@ -18,6 +19,7 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [showApiConfig, setShowApiConfig] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -162,6 +164,54 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* API Config Section */}
+      <div className="bg-white rounded-xl shadow-sm border border-border p-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <Database className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-text-primary">数据同步</h2>
+            <p className="text-sm text-text-secondary">配置第三方服务实现数据自动同步</p>
+          </div>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <button
+            onClick={() => setShowApiConfig(true)}
+            className="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-primary/30 hover:bg-primary/5 transition-all group text-left"
+          >
+            <div className="p-3 bg-grey-100 dark:bg-grey-800 rounded-lg group-hover:bg-primary/10 transition-colors">
+              <Settings className="w-5 h-5 text-text-secondary group-hover:text-primary" />
+            </div>
+            <div>
+              <h3 className="font-medium text-text-primary">API 配置</h3>
+              <p className="text-sm text-text-secondary">管理飞书、Notion 等第三方同步</p>
+            </div>
+            <ExternalLink className="w-4 h-4 text-text-secondary ml-auto" />
+          </button>
+
+          <button
+            onClick={() => setShowApiConfig(true)}
+            className="flex items-center gap-4 p-4 rounded-xl border border-border hover:border-primary/30 hover:bg-primary/5 transition-all group text-left"
+          >
+            <div className="p-3 bg-grey-100 dark:bg-grey-800 rounded-lg group-hover:bg-primary/10 transition-colors">
+              <RefreshCw className="w-5 h-5 text-text-secondary group-hover:text-primary" />
+            </div>
+            <div>
+              <h3 className="font-medium text-text-primary">手动同步</h3>
+              <p className="text-sm text-text-secondary">立即触发数据同步</p>
+            </div>
+            <ExternalLink className="w-4 h-4 text-text-secondary ml-auto" />
+          </button>
+        </div>
+      </div>
+
+      <ApiConfigPanel
+        isOpen={showApiConfig}
+        onClose={() => setShowApiConfig(false)}
+      />
     </div>
   );
 }

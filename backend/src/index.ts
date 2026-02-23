@@ -417,6 +417,105 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
     return c.json({ success: true });
   });
 
+  // --- API Configs (Third-party Integrations) ---
+
+  // GET /api/api-configs
+  app.get('/api/api-configs', async (c) => {
+    const userId = getUserId(c);
+    const configs = await db.select().from(tables.apiConfigs).where(eq(tables.apiConfigs.userId, userId));
+    return c.json(configs.map(cfg => ({
+      ...cfg,
+      config: typeof cfg.config === 'string' ? JSON.parse(cfg.config) : cfg.config
+    })));
+  });
+
+  // POST /api/api-configs
+  app.post('/api/api-configs', async (c) => {
+    const userId = getUserId(c);
+    const body = await c.req.json();
+    
+    const [newConfig] = await db.insert(tables.apiConfigs).values({
+      ...body,
+      id: body.id || crypto.randomUUID(),
+      userId: userId,
+      config: typeof body.config === 'string' ? body.config : JSON.stringify(body.config),
+    }).returning();
+    
+    return c.json({
+      ...newConfig,
+      config: typeof newConfig.config === 'string' ? JSON.parse(newConfig.config) : newConfig.config
+    });
+  });
+
+  // PUT /api/api-configs/:id
+  app.put('/api/api-configs/:id', async (c) => {
+    const userId = getUserId(c);
+    const id = c.req.param('id');
+    const body = await c.req.json();
+    
+    const updates: any = { ...body, updatedAt: new Date() };
+    if (body.config) {
+      updates.config = typeof body.config === 'string' ? body.config : JSON.stringify(body.config);
+    }
+    
+    const [updated] = await db.update(tables.apiConfigs)
+      .set(updates)
+      .where(and(eq(tables.apiConfigs.id, id), eq(tables.apiConfigs.userId, userId)))
+      .returning();
+      
+    if (!updated) {
+      return c.json({ error: "Config not found or unauthorized" }, 404);
+    }
+    
+    return c.json({
+      ...updated,
+      config: typeof updated.config === 'string' ? JSON.parse(updated.config) : updated.config
+    });
+  });
+
+  // DELETE /api/api-configs/:id
+  app.delete('/api/api-configs/:id', async (c) => {
+    const userId = getUserId(c);
+    const id = c.req.param('id');
+    
+    await db.delete(tables.apiConfigs).where(and(eq(tables.apiConfigs.id, id), eq(tables.apiConfigs.userId, userId)));
+    
+    return c.json({ success: true });
+  });
+
+  // POST /api/api-configs/:id/sync (Trigger manual sync)
+  app.post('/api/api-configs/:id/sync', async (c) => {
+    const userId = getUserId(c);
+    const id = c.req.param('id');
+    
+    const configs = await db.select().from(tables.apiConfigs)
+      .where(and(eq(tables.apiConfigs.id, id), eq(tables.apiConfigs.userId, userId)));
+    
+    if (configs.length === 0) {
+      return c.json({ error: "Config not found or unauthorized" }, 404);
+    }
+    
+    const config = configs[0];
+    const parsedConfig = typeof config.config === 'string' ? JSON.parse(config.config) : config.config;
+    
+    // Update status to syncing
+    await db.update(tables.apiConfigs)
+      .set({ syncStatus: 'syncing', updatedAt: new Date() })
+      .where(eq(tables.apiConfigs.id, id));
+    
+    // TODO: Implement actual sync logic for different providers
+    // For now, just mark as completed
+    await db.update(tables.apiConfigs)
+      .set({ 
+        syncStatus: 'completed', 
+        lastSyncAt: new Date(),
+        updatedAt: new Date()
+      })
+      .where(eq(tables.apiConfigs.id, id));
+    
+    return c.json({ success: true, message: "Sync triggered" });
+  });
+
   // ── Static Files & SPA Fallback (MUST be after all API routes) ──
   app.use('/*', serveStatic({
     root: './dist',

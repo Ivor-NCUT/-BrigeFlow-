@@ -71,3 +71,18 @@ export interface SharedPage {
   config: ShareConfig;
   createdAt: string;
 }
+
+export type ApiProvider = 'feishu' | 'notion' | 'google_contacts' | 'custom';
+
+export interface ApiConfig {
+  id: string;
+  userId?: string;
+  name: string;
+  provider: ApiProvider;
+  config: Record<string, any>;
+  enabled: boolean;
+  lastSyncAt?: string;
+  syncStatus: 'idle' | 'syncing' | 'completed' | 'error';
+  createdAt?: string;
+  updatedAt?: string;
+}

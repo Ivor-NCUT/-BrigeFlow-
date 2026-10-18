@@ -1,0 +1,9 @@
+.git
+node_modules
+.env*
+.insta
+*.private.*
+*.log
+.figma
+Bonjour! Design System_*
+chat

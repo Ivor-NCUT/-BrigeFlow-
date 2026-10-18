@@ -28,6 +28,8 @@ public/ - 静态资源
 package.json - 前端依赖与脚本
 backend/package.json - 后端依赖与脚本
 vite.config.ts - 前端构建配置
+Dockerfile - Node 24 运行容器，包含预先构建的 dist 与 Hono 后端
+DEPLOYMENT-INSTACLOUD.md - 暂停环境迁移、原外部数据库与内部验收边界
 tailwind.config.js - 设计系统 token (颜色/字体/圆角/阴影)
 src/index.css - 全局样式 (glass/pill-tag/动画)
 YOUWARE.md - 业务需求文档

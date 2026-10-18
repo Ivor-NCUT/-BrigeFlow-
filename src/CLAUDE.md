@@ -6,7 +6,7 @@ api/ - API 交互层，定义与后端通信的接口
 assets/ - 静态资源 (图片, SVG)
 components/ - UI 组件库 (原子设计)
 layouts/ - 页面布局组件
-lib/ - 核心库代码 (EdgeSpark 客户端初始化)
+lib/ - 核心库代码（InsForge 客户端、生产同源 API；显式 API 地址优先，开发默认 localhost:3001）
 pages/ - 路由页面组件 (Dashboard, NetworkGraph 等)
 store/ - Zustand 状态管理
 styles/ - 全局样式与 Tailwind 配置

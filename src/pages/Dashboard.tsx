@@ -11,7 +11,7 @@ import RelationshipModal from '../components/RelationshipModal';
 import ImportModal from '../components/ImportModal';
 import { useContactStore } from '../store/contactStore';
 import type { Contact } from '../types/contact';
-import { insforge } from '../lib/insforge';
+import { localBackend } from '../lib/localBackend';
 import { API_BASE } from '../lib/api';
 import bonjourIcon from '../assets/icons/bonjour-profile.svg';
 import magicHatIcon from '../assets/icons/magic-hat.svg';
@@ -233,7 +233,7 @@ export default function Dashboard() {
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      const { data: { session } } = await insforge.auth.getCurrentSession();
+      const { data: { session } } = await localBackend.auth.getCurrentSession();
       const token = session?.accessToken;
 
       const res = await fetch(`${API_BASE}/api/contacts/export`, {

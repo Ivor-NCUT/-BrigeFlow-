@@ -18,7 +18,7 @@ src/ - 前端核心代码 (4子目录: pages, components, store, lib)
   src/lib/ - 工具函数与 API 层
   src/types/ - TypeScript 类型定义
   src/assets/ - 静态资源 (icons)
-backend/ - 后端服务 (Hono, Drizzle, Supabase Auth, xlsx)
+backend/ - 后端服务 (Hono, Drizzle, 自托管会话认证, xlsx)
   backend/src/api/ - 业务接口 (import: CSV导入, template: 模板下载, export: Excel多Sheet导出)
   backend/src/db/ - 数据库 Schema (contacts, tags, relationships, sharedPages, apiConfigs)
 public/ - 静态资源
@@ -28,6 +28,8 @@ public/ - 静态资源
 package.json - 前端依赖与脚本
 backend/package.json - 后端依赖与脚本
 vite.config.ts - 前端构建配置
+Dockerfile - Node 24 运行容器，包含预先构建的 dist 与 Hono 后端
+DEPLOYMENT-INSTACLOUD.md - InstaCloud PostgreSQL、自托管认证/头像、历史数据归档与暂停验收边界
 tailwind.config.js - 设计系统 token (颜色/字体/圆角/阴影)
 src/index.css - 全局样式 (glass/pill-tag/动画)
 YOUWARE.md - 业务需求文档

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { insforge } from './lib/insforge';
+import { localBackend } from './lib/localBackend';
 import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/Dashboard';
 import Timeline from './pages/Timeline';
@@ -17,7 +17,7 @@ function RequireAuth({ children }: { children: JSX.Element }) {
   const location = useLocation();
 
   useEffect(() => {
-    insforge.auth.getCurrentSession().then(({ data: { session } }) => {
+    localBackend.auth.getCurrentSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
     });

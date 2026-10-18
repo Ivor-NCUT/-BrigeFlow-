@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 useUserStore 获取当前用户信息，依赖 insforge 进行登出
+ * [INPUT]: 依赖 useUserStore 获取当前用户信息，依赖 localBackend 进行登出
  * [OUTPUT]: 对外提供 ProfilePage 组件，允许用户修改昵称、头像、API配置和退出登录
  * [POS]: pages/ProfilePage，个人中心页面
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
@@ -23,8 +23,8 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-      setFullName(user.user_metadata?.full_name || '');
-      setAvatarUrl(user.user_metadata?.avatar_url || '');
+      setFullName(user.profile?.name || '');
+      setAvatarUrl(user.profile?.avatar_url || '');
     }
   }, [user]);
 

@@ -9,3 +9,5 @@ dist/
 .idea/
 coverage/
 build/
+
+node_modules

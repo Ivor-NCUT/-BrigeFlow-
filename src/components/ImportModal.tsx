@@ -8,7 +8,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, FileDown, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { useContactStore } from '../store/contactStore';
-import { insforge } from '../lib/insforge';
+import { localBackend } from '../lib/localBackend';
 import { API_BASE } from '../lib/api';
 
 interface ImportModalProps {
@@ -57,7 +57,7 @@ export default function ImportModal({ isOpen, onClose }: ImportModalProps) {
     setProgress(0);
 
     try {
-      const { data: { session } } = await insforge.auth.getCurrentSession();
+      const { data: { session } } = await localBackend.auth.getCurrentSession();
       const token = session?.accessToken;
       
       const formData = new FormData();

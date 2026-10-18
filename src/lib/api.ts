@@ -1,10 +1,10 @@
-import { insforge } from './insforge';
+import { localBackend } from './localBackend';
 
-export const API_BASE = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:3001' : 'https://yuanmai.preview.huawei-zeabur.cn');
+export const API_BASE = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
 
 export const api = {
   fetch: async (path: string, options: RequestInit = {}) => {
-    const { data: { session } } = await insforge.auth.getCurrentSession();
+    const { data: { session } } = await localBackend.auth.getCurrentSession();
     const token = session?.accessToken;
 
     const headers: Record<string, string> = {

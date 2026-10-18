@@ -1,5 +1,7 @@
 # 缘脉 BridgeFlow - 产品白皮书
 
+部署与暂停环境迁移说明见 [DEPLOYMENT-INSTACLOUD.md](./DEPLOYMENT-INSTACLOUD.md)。生产构建默认使用同源 `/api`，不再默认调用旧 Zeabur 地址；开发模式仍使用 `localhost:3001`，显式 `VITE_API_BASE_URL` 保留优先级。
+
 > **让每一次相遇都有迹可循，让每一份关系资产都成为资产。**
 
 ---

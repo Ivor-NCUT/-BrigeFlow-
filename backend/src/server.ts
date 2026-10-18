@@ -1,3 +1,4 @@
+import { initializeAuth } from "./local-auth";
 import { serve } from "@hono/node-server";
 import { createApp } from "./index";
 import { authMiddleware } from "./middleware/auth";
@@ -12,6 +13,7 @@ async function start() {
   console.log("Starting backend server...");
 
   try {
+    await initializeAuth();
     const app = await createApp(authMiddleware);
 
     const port = Number(process.env.PORT) || 3001;

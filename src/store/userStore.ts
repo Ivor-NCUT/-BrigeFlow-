@@ -1,11 +1,11 @@
 /**
- * [INPUT]: 依赖 insforge client 进行身份验证和用户信息更新
+ * [INPUT]: 依赖 localBackend 进行身份验证和用户信息更新
  * [OUTPUT]: 对外提供 useUserStore hook，管理当前用户 session 和 profile
  * [POS]: store/userStore，前端用户状态中心
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { create } from 'zustand';
-import { insforge } from '../lib/insforge';
+import { localBackend } from '../lib/localBackend';
 
 interface User {
   id: string;
@@ -34,7 +34,7 @@ export const useUserStore = create<UserState>((set) => ({
   fetchUser: async () => {
     set({ loading: true });
     try {
-      const { data: { session } } = await insforge.auth.getCurrentSession();
+      const { data: { session } } = await localBackend.auth.getCurrentSession();
       set({ user: session?.user || null });
       
       // Note: Insforge SDK might not have onAuthStateChange in the same way, 
@@ -49,7 +49,7 @@ export const useUserStore = create<UserState>((set) => ({
 
   updateProfile: async (updates) => {
     try {
-      const { data, error } = await insforge.auth.setProfile({
+      const { data, error } = await localBackend.auth.setProfile({
         name: updates.fullName,
         avatar_url: updates.avatarUrl,
       });
@@ -69,31 +69,10 @@ export const useUserStore = create<UserState>((set) => ({
     }
   },
 
-  uploadAvatar: async (file: File) => {
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
-
-      // Assuming 'avatars' bucket exists
-      const { error: uploadError } = await insforge.storage
-        .from('avatars')
-        .upload(filePath, file);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const { data } = insforge.storage.from('avatars').getPublicUrl(filePath);
-      return data.publicUrl;
-    } catch (error) {
-      console.error('Error uploading avatar:', error);
-      throw error;
-    }
-  },
+  uploadAvatar: (file: File) => localBackend.uploadAvatar(file),
 
   signOut: async () => {
-    await insforge.auth.signOut();
+    await localBackend.auth.signOut();
     set({ user: null });
   }
 }));

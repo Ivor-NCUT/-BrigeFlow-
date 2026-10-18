@@ -5,7 +5,7 @@
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { Hono } from "hono";
-import { cors } from "hono/cors";
+import { localAuthRoutes, serveAvatar } from "./local-auth";
 import * as tables from "./db/schema";
 import { db as postgresDb } from "./db/index";
 import { eq, inArray, and, sql } from "drizzle-orm";
@@ -28,12 +28,8 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
     }, 500);
   });
 
-  app.use('/api/*', cors({
-    origin: (origin) => origin,
-    credentials: true,
-    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization', 'x-es-sticky-session-db-bookmark'],
-  }));
+  app.route('/api/auth', localAuthRoutes());
+  app.get('/media/avatars/:user/:file', serveAvatar);
 
   if (authMiddleware) {
     app.use('/api/*', async (c, next) => {
@@ -169,7 +165,7 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
     const body = await c.req.json();
     
     const [updated] = await db.update(tables.relationships)
-      .set(body)
+      .set({ ...body, id, userId })
       .where(and(eq(tables.relationships.id, id), eq(tables.relationships.userId, userId)))
       .returning();
       
@@ -195,7 +191,7 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
     const userId = getUserId(c);
     const id = c.req.param('id');
     const body = await c.req.json();
-    const { tags, ...updates } = body;
+    const { tags, id: ignoredId, userId: ignoredOwner, ...updates } = body;
     
     const [updated] = await db.update(tables.contacts)
       .set(updates)
@@ -453,7 +449,7 @@ export async function createApp(authMiddleware?: any, dbOverride?: any): Promise
     const id = c.req.param('id');
     const body = await c.req.json();
     
-    const updates: any = { ...body, updatedAt: new Date() };
+    const updates: any = { ...body, id, userId, updatedAt: new Date() };
     if (body.config) {
       updates.config = typeof body.config === 'string' ? body.config : JSON.stringify(body.config);
     }

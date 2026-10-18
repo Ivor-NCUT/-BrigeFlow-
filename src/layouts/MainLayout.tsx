@@ -134,8 +134,8 @@ export default function MainLayout() {
               className="w-8 h-8 rounded-full bg-grey-100 dark:bg-grey-800 border border-border dark:border-grey-700 overflow-hidden hover:ring-2 hover:ring-primary/20 transition-all cursor-pointer"
             >
               <img
-                src={user?.user_metadata?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
-                alt={user?.user_metadata?.full_name || "User"}
+                src={user?.profile?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
+                alt={user?.profile?.name || "User"}
                 className="w-full h-full object-cover"
               />
             </button>
